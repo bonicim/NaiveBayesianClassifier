@@ -105,7 +105,7 @@ def get_target_values(list_tweets):
         list_targets.append(target)
     list_targets = np.array(list_targets)
 
-    return [list_targets, dict_category_key ]
+    return [list_targets, dict_category_key]
 
 
 def get_corpus(list_tweets):
@@ -128,7 +128,8 @@ def get_corpus(list_tweets):
     dict_corpus = {}
     for tweet in list_tweets:
         # turn tweet into a bag of words
-        cleaned_tweet = clean_tweet(tweet)
+        tweet_text = tweet[1]
+        cleaned_tweet = clean_tweet(tweet_text)
         list_words_in_tweet = tokenize_tweet(cleaned_tweet)
         bag = make_tweet_bag(list_words_in_tweet)
 
@@ -164,7 +165,18 @@ def get_tweet_list_bag(list_tweets):
         [ ("donald", {"wall" : 5, "rich" : 2}),
           ("hillary", {"glass" : 5, "emails" : 2, "poor" : 8}) ]
     """
-    return list_tweets
+    list_tweet_bag = []
+
+    for tweet in list_tweets:
+        tweet_author = tweet[0]
+        tweet_text = tweet[1]
+        cleaned_tweet = clean_tweet(tweet_text)
+        list_words_in_tweet = tokenize_tweet(cleaned_tweet)
+        bag = make_tweet_bag(list_words_in_tweet)
+        tweet_tuple = (tweet_author, bag)
+        list_tweet_bag.append(tweet_tuple)
+
+    return list_tweet_bag
 
 
 def get_tweet_list_word_count(corpus, tweet_list_bag):
@@ -192,8 +204,21 @@ def get_tweet_list_word_count(corpus, tweet_list_bag):
           [13, 60, 53, 2, 0]
           [39, 0, 5, 0, 0] ]
     """
+    list_master = []
 
-    return result
+    for tweet in tweet_list_bag:
+        bag_dict = tweet[1]
+        list_tweet_val = []
+        for word_tuple in corpus:
+            word = word_tuple[0]
+            val = 0.0
+            if word in bag_dict:
+                val = bag_dict[word]
+            list_tweet_val.append(val)
+        list_master.append(list_tweet_val)
+
+    numpy_arr = np.array(list_master)
+    return numpy_arr
 
 
 def get_scikit_fit_args(list_tweets):
@@ -218,8 +243,16 @@ def get_scikit_fit_args(list_tweets):
            [0, 1, 1, 0] ]
 
     """
-    result = []
-    return result
+    corpus = get_corpus(list_tweets)
+    tweet_list_bag = get_tweet_list_bag(list_tweets)
+    np_array = get_tweet_list_word_count(corpus, tweet_list_bag)
+    np_x_arg = np_array
+
+    list_target_val = get_target_values(list_tweets)
+    np_y_arg = list_target_val[0]
+
+    args = [np_x_arg, np_y_arg]
+    return args
 
 
 def cleanup(list_tweets):
@@ -324,11 +357,41 @@ def main():
     list_tweets = read(FILE)
 
     """
-    # glass box test: get_corpus()
-    list_corpus = get_corpus(list_tweets)
-    print list_corpus
+     # glass box test: get_scikit_fit_args()
+    list_scikit_fit_args = get_scikit_fit_args(list_tweets)
+    print list_scikit_fit_args[1]
+    print list_scikit_fit_args[0]
     """
 
+    """
+    # glass box test: get_tweet_list_word_count()
+    corpus = get_corpus(list_tweets)
+    tweet_list_bag = get_tweet_list_bag(list_tweets)
+    np_array = get_tweet_list_word_count(corpus, tweet_list_bag)
+    print np_array
+    """
+
+    """
+    # glass box test: get_tweet_list_bag()
+    list_tweet_bag = get_tweet_list_bag(list_tweets)
+
+    for tweet in list_tweet_bag:
+        print tweet
+        break
+
+    for tweet in list_tweets:
+        print tweet
+        break
+    """
+
+    """
+    # glass box test: get_corpus()
+    list_corpus = get_corpus(list_tweets)
+    for tweet in list_tweets:
+        print tweet
+        break
+    print list_corpus
+    """
 
     """
     # glass box test: get_target_values()
