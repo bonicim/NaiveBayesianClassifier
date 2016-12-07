@@ -84,13 +84,28 @@ def get_target_values(list_tweets):
           (hillary : "Break the ceiling.") ]
 
     :return: a list of two objects: a numpy array of the vector of tweet
-    authors and a list of tuples containing the index to author mapping
+    authors and a dictionary containing the index to author mapping
 
         example:
 
-        ( [0, 1, 1, 0], [(0, "donald"), (1, "hillary")] )
+        [ [0, 1, 1, 0], {0 : "donald", 1 : "hillary"} ]
     """
-    return list_tweets
+    index = 0
+    dict_category_key = {}
+    for tweet in list_tweets:
+        category = tweet[0]
+        if category not in dict_category_key:
+            dict_category_key[category] = index
+            index += 1
+
+    list_targets = []
+    for tweet in list_tweets:
+        category = tweet[0]
+        target = dict_category_key.get(category)
+        list_targets.append(target)
+    list_targets = np.array(list_targets)
+
+    return [list_targets, dict_category_key ]
 
 
 def get_corpus(list_tweets):
@@ -110,7 +125,25 @@ def get_corpus(list_tweets):
 
         [ ("dog", 5), ("cat", 2) ]
     """
-    return list_tweets
+    dict_corpus = {}
+    for tweet in list_tweets:
+        # turn tweet into a bag of words
+        cleaned_tweet = clean_tweet(tweet)
+        list_words_in_tweet = tokenize_tweet(cleaned_tweet)
+        bag = make_tweet_bag(list_words_in_tweet)
+
+        # update the total tally for each word
+        for word, count in bag.items():
+            if word not in dict_corpus:
+                dict_corpus[word] = 0.0
+            dict_corpus[word] = dict_corpus.get(word) + count
+
+    list_corpus = []
+    for key, value in dict_corpus.items():
+        temp = [key, value]
+        list_corpus.append(temp)
+
+    return list_corpus
 
 
 def get_tweet_list_bag(list_tweets):
@@ -288,6 +321,25 @@ def evaluation():
 
 
 def main():
+    list_tweets = read(FILE)
+
+    """
+    # glass box test: get_corpus()
+    list_corpus = get_corpus(list_tweets)
+    print list_corpus
+    """
+
+
+    """
+    # glass box test: get_target_values()
+    list_targ_val = get_target_values(list_tweets)
+    print list_targ_val[0]
+    print list_targ_val[1]
+    """
+
+
+
+
     """
     # glass box tests
     tweet = "This is a tweet; this tweet, which should not have punc!"
