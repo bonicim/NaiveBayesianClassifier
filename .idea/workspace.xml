@@ -13,7 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/NaiveBayes$NaiveBayesClassifier.coverage" NAME="NaiveBayesClassifier Coverage Results" MODIFIED="1481153836024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/NaiveBayes$NaiveBayesClassifier.coverage" NAME="NaiveBayesClassifier Coverage Results" MODIFIED="1481155080052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -27,10 +27,23 @@
       <file leaf-file-name="NaiveBayesClassifier.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/NaiveBayesClassifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="224" column="7" selection-start-line="224" selection-start-column="7" selection-end-line="224" selection-end-column="7" />
+            <state relative-caret-position="539">
+              <caret line="403" column="37" selection-start-line="403" selection-start-column="37" selection-end-line="403" selection-end-column="37" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#329#672#0" expanded="false" />
+                <element signature="e#706#962#0" expanded="false" />
+                <element signature="e#1001#1314#0" expanded="false" />
+                <element signature="e#1346#1868#0" expanded="false" />
+                <element signature="e#1916#2846#0" expanded="false" />
+                <element signature="e#2887#3944#0" expanded="false" />
+                <element signature="e#3988#4843#0" expanded="false" />
+                <element signature="e#3988#4456#1" expanded="false" />
+                <element signature="e#4905#5936#0" expanded="false" />
+                <element signature="e#5981#6790#0" expanded="false" />
+                <element signature="e#5981#6464#1" expanded="false" />
+                <element signature="e#11502#11731#0" expanded="false" />
+                <element signature="e#11763#12134#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -365,14 +378,14 @@
     <frame x="18" y="43" width="1400" height="837" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13642856" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32884097" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32823366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32614556" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32823366" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3180593" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3180593" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21832883" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -397,7 +410,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -407,6 +422,19 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#329#672#0" expanded="false" />
+            <element signature="e#706#962#0" expanded="false" />
+            <element signature="e#1001#1314#0" expanded="false" />
+            <element signature="e#1346#1868#0" expanded="false" />
+            <element signature="e#1916#2846#0" expanded="false" />
+            <element signature="e#2887#3944#0" expanded="false" />
+            <element signature="e#3988#4843#0" expanded="false" />
+            <element signature="e#3988#4456#1" expanded="false" />
+            <element signature="e#4905#5936#0" expanded="false" />
+            <element signature="e#5981#6790#0" expanded="false" />
+            <element signature="e#5981#6464#1" expanded="false" />
+            <element signature="e#11502#11731#0" expanded="false" />
+            <element signature="e#11763#12134#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -435,10 +463,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/NaiveBayesClassifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="224" column="7" selection-start-line="224" selection-start-column="7" selection-end-line="224" selection-end-column="7" />
+        <state relative-caret-position="539">
+          <caret line="403" column="37" selection-start-line="403" selection-start-column="37" selection-end-line="403" selection-end-column="37" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#329#672#0" expanded="false" />
+            <element signature="e#706#962#0" expanded="false" />
+            <element signature="e#1001#1314#0" expanded="false" />
+            <element signature="e#1346#1868#0" expanded="false" />
+            <element signature="e#1916#2846#0" expanded="false" />
+            <element signature="e#2887#3944#0" expanded="false" />
+            <element signature="e#3988#4843#0" expanded="false" />
+            <element signature="e#3988#4456#1" expanded="false" />
+            <element signature="e#4905#5936#0" expanded="false" />
+            <element signature="e#5981#6790#0" expanded="false" />
+            <element signature="e#5981#6464#1" expanded="false" />
+            <element signature="e#11502#11731#0" expanded="false" />
+            <element signature="e#11763#12134#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -54,7 +54,7 @@ def make_tweet_bag(tweet_list):
     return tweet_bag
 
 
-def read(document):
+def read_data(document):
     """
     Creates a list of tweet tuples from DOCUMENT
     :param document: csv file of tweets
@@ -73,7 +73,7 @@ def read(document):
     return list_tweets
 
 
-def get_target_values(list_tweets):
+def get_target_values_list(list_tweets):
     """
     Creates a vector of the author for each tweet in LIST_TWEETS;
     :param list_tweets: a list of tweets in the form of a tuple
@@ -108,7 +108,7 @@ def get_target_values(list_tweets):
     return [list_targets, dict_category_key]
 
 
-def get_corpus(list_tweets):
+def get_corpus_list(list_tweets):
     """
     Creates a list of tuples that contain every unique word and its
     associated frequency for all tweets in LIST_TWEETS
@@ -243,118 +243,214 @@ def get_scikit_fit_args(list_tweets):
            [0, 1, 1, 0] ]
 
     """
-    corpus = get_corpus(list_tweets)
+    corpus = get_corpus_list(list_tweets)
     tweet_list_bag = get_tweet_list_bag(list_tweets)
     np_array = get_tweet_list_word_count(corpus, tweet_list_bag)
     np_x_arg = np_array
 
-    list_target_val = get_target_values(list_tweets)
+    list_target_val = get_target_values_list(list_tweets)
     np_y_arg = list_target_val[0]
 
     args = [np_x_arg, np_y_arg]
     return args
 
 
-def cleanup(list_tweets):
+def get_corpus_prob_dict(corpus_list):
+    # TODO: Implement
     """
-    :param list_tweets: list of tweets from all candidates
-    :return: list of 3 sets of data;
-
-    The first, WORD_TALLY, is a dictionary that holds frequencies of all
-    words in LIST_TWEETS
-
-    The second, CATEGORY_TWEET_COUNT, is a list of tuples; the tuple has two
-    members: the category and the total tweets associated with the category
+    Calculates probabilities for every word in CORPUS_LIST
+    :param corpus_list: a list of unique word tuples
 
         example:
 
-        (donald, 846)
-        (hillary, 987)
+        [ ("dog", 5), ("cat", 2) ]
 
-    The third, CATEGORY_WORD_TALLY, is a dictionary of categories and their
-    associated word tally dictionaries.
+    :return: a dictionary comprised of word to probability pairs
+    """
+    dict_corpus_prob = {}
+    return dict_corpus_prob
 
-        example of one key, value pair:
 
-        donald : {great : 12, again: 123, america : 84}
-        hillary : {women : 94723, love: 1731, glass: 854}
+def get_author_prob_dict(list_target_values):
+    # TODO: Implement
+    """
+    Calculates probabilities for every author in LIST_TARGET_VALUES
+    :param list_target_values: a list of two objects: a numpy array of the
+    vector of tweet authors and a dictionary containing the index to author
+    mapping
+
+        example:
+
+        [ [0, 1, 1, 0], {0 : "donald", 1 : "hillary"} ]
+
+    :return: a dictionary comprised of author to probability pairs
     """
 
-    word_tally = {}
-    category_tweet_count = {}
-    category_word_tally = {}
+    dict_author_prob = {}
+    return dict_author_prob
 
-    for tweet in list_tweets:
-        category = tweet[0]
-        if category not in category_tweet_count:
-            category_tweet_count[category] = 0.0
-        if category not in category_word_tally:
-            category_word_tally[category] = {}
 
-        # turn tweet into a bag of words
-        cleaned_tweet = clean_tweet(tweet)
-        list_words_in_tweet = tokenize_tweet(cleaned_tweet)
-        bag = make_tweet_bag(list_words_in_tweet)
+def get_cond_prob_dict(corpus_list, tweet_np_matrix, target_val_list):
+    # TODO: Implement
+    """
+    Calculates conditional probabilities for all categories in TARGET_VAL_LIST
+    :param corpus_list: a list of unique word tuples
 
-        # update appropriate category tweet count
-        category_tweet_count[category] = category_tweet_count.get(category) + 1
+        example:
 
-        # update the total tally for each word
-        # update the category's total tally for each word
-        for word, count in bag.items():
-            if word not in word_tally:
-                word_tally[word] = 0.0
+        [ ("dog", 5), ("cat", 2) ]
 
-            cat_word_tally = category_word_tally[category]
-            if word not in cat_word_tally:
-                cat_word_tally[word] = 0.0
+    :param tweet_np_matrix: a numpy array object of the list of
+    word frequencies of all tweets
 
-            word_tally[word] = word_tally.get(word) + count
-            cat_word_tally[word] = cat_word_tally.get(word) + count
+        example:
 
-    category_tweet_count = map(lambda x: (x, category_tweet_count.get(x)),
-                          category_tweet_count)
+        [ [3, 0, 5, 6, 7]
+          [13, 60, 53, 2, 0]
+          [39, 0, 5, 0, 0] ]
 
-    list_training_data = [word_tally, category_tweet_count, category_word_tally]
-    return list_training_data
+    :param target_val_list: a list of two objects: a numpy array
+    of the vector of tweet authors and a dictionary containing the index to
+    author mapping
+
+        example:
+
+        [ [0, 1, 1, 0], {0 : "donald", 1 : "hillary"} ]
+    :return: a dictionary comprised of author to dictionary pairs. The
+    dictionary value is comprised of word to probability pairs.
+
+        example:
+
+        { "donald" :  { "wall" : .23, "great" : .009},
+          "hillary" : { "predator" : .32, "democrat" : .119} }
+    """
+    dict_author_cond_prob = {}
+    return dict_author_cond_prob
+
+
+def cleanup(list_tweets):
+    # TODO test
+    """
+    Cleans all tweets and calculates three data sets needed for Naive
+    Bayesian analysis
+
+    :param list_tweets: list of tweets from all candidates
+    :return: list of 3 sets of data;
+
+    The first, LIST_CORPUS, is a list that holds frequencies of all
+    words in LIST_TWEETS.
+
+    The second, LIST_TARGET_VALUES, is a list of two objects:
+    a numpy array of the vector of tweet authors and a dictionary
+    containing the index to author mapping.
+
+        example:
+
+        [ [0, 1, 1, 0], {0 : "donald", 1 : "hillary"} ]
+
+    The third, TWEET_NP_MATRIX, is a numpy array object of the list of word
+    frequencies of all tweets
+
+        example:
+
+        [ [3, 0, 5, 6, 7]
+          [13, 60, 53, 2, 0]
+          [39, 0, 5, 0, 0] ]
+    """
+
+    list_corpus = get_corpus_list(list_tweets)
+    list_target_values = get_target_values_list(list_tweets)
+    tweet_list_bag = get_tweet_list_bag(list_tweets)
+    tweet_np_matrix = get_tweet_list_word_count(list_corpus, tweet_list_bag)
+
+    return [list_corpus, list_target_values, tweet_np_matrix]
 
 
 def train(document):
+    # TODO: test
     """
-    TODO: implement this
     :param document: csv file of tweets
-    :return:
+    :return: a list consisting of three data:
+
+    The first is a dictionary comprised of word to probability pairs.
+
+    The second is a dictionary comprised of author to probability pairs.
+
+    The third is a dictionary comprised of author to dictionary pairs. The
+    dictionary value is comprised of word to probability pairs.
+
+        example:
+
+        { "donald" :  { "wall" : .23, "great" : .009},
+          "hillary" : { "predator" : .32, "democrat" : .119} }
     """
 
-    list_tweets = read(document)
+    list_tweets = read_data(document)
     list_data = cleanup(list_tweets)
 
-    word_tally = list_data[0]
-    category_tweet_count = list_data[1]
-    category_word_tally = list_data[2]
+    list_corpus = list_data[0]
+    list_target_values = list_data[1]
+    tweet_np_matrix = list_data[2]
 
-    # calculate
+    dict_corpus_prob = get_corpus_prob_dict(list_corpus)
+    dict_author_prob = get_author_prob_dict(list_target_values)
+    dict_cond_prob = get_cond_prob_dict(list_corpus, tweet_np_matrix,
+                                        list_target_values)
 
-    # calculate prior probabilities for every category
-    tweet_count = reduce(lambda x, y: x[1] + y[1], category_tweet_count)
-    list_cat_prior_prob = map(lambda x: (x[0], x[1]/tweet_count),
-                              category_tweet_count)
-
-    # calculate
-
-    return True
+    data_set = [dict_corpus_prob, dict_author_prob, dict_cond_prob]
+    return data_set
 
 
-def predict():
-    return 1
+def predict(dataset, tweet):
+    # TODO: implement
+    """
+    Calculates and returns the Naive Bayesian score for TWEET based on DATASET
+    :param dataset: a list consisting of three data:
+
+    The first is a dictionary comprised of word to probability pairs.
+
+    The second is a dictionary comprised of author to probability pairs.
+
+    The third is a dictionary comprised of author to dictionary pairs. The
+    dictionary value is comprised of word to probability pairs.
+
+        example:
+
+        { "donald" :  { "wall" : .23, "great" : .009},
+          "hillary" : { "predator" : .32, "democrat" : .119} }
+
+    :param tweet: a string
+    :return: list of classes that TWEET might belong to with decreasing
+    probability
+    """
+    list_prob_of_tweet = []
+    dict_corpus_prob = dataset[0]
+    dict_author_prob = dataset[1]
+    dict_cond_prob = dataset[2]
+
+    # create score accumulators
+
+    # DO SOME MATH and accumulate scores
+
+    return list_prob_of_tweet
 
 
-def evaluation():
+def evaluation(data_set):
+    """
+    Computes the overall accuracy and the per class accuracy of classifier
+    Precision - Out of all the answers by the classifier, which ones are correct?
+    Recall - Out of all the actual correct answers, which ones are returned by the classifier?
+    F1-Score - 2 * precision * reecall / (precision + recall)
+
+    :param data_set:
+
+    :return:
+    """
     return
 
 
-def main():
-    list_tweets = read(FILE)
+def glassbox_tests():
+    list_tweets = read_data(FILE)
 
     """
      # glass box test: get_scikit_fit_args()
@@ -399,9 +495,6 @@ def main():
     print list_targ_val[0]
     print list_targ_val[1]
     """
-
-
-
 
     """
     # glass box tests
@@ -476,6 +569,9 @@ def main():
 
     return True
 
+
+def main():
+    return glassbox_tests()
 
 if __name__ == '__main__':
     main()
