@@ -329,7 +329,6 @@ def get_cond_prob_dict(corpus_list, tweet_np_matrix, target_val_list):
 
 
 def cleanup(list_tweets):
-    # TODO test
     """
     Cleans all tweets and calculates three data sets needed for Naive
     Bayesian analysis
@@ -367,7 +366,6 @@ def cleanup(list_tweets):
 
 
 def train(document):
-    # TODO: test
     """
     :param document: csv file of tweets
     :return: a list consisting of three data:
@@ -402,7 +400,7 @@ def train(document):
 
 
 def predict(dataset, tweet):
-    # TODO: implement
+    # TODO: implement and test
     """
     Calculates and returns the Naive Bayesian score for TWEET based on DATASET
     :param dataset: a list consisting of three data:
@@ -436,6 +434,7 @@ def predict(dataset, tweet):
 
 
 def evaluation(data_set):
+    # TODO: implement
     """
     Computes the overall accuracy and the per class accuracy of classifier
     Precision - Out of all the answers by the classifier, which ones are correct?
@@ -446,11 +445,40 @@ def evaluation(data_set):
 
     :return:
     """
-    return
+    return data_set
 
 
-def glassbox_tests():
+def tests():
+    """
+    Black and glass box testing for all methods
+    :return: True
+    """
     list_tweets = read_data(FILE)
+
+    # black box test: cleanup()
+    list_prob_args = cleanup(list_tweets)
+
+    list_corpus = list_prob_args[0]
+    list_target_values = list_prob_args[1]
+    tweet_np_matrix = list_prob_args[2]
+
+    # glass box test: get_corpus_prob_dict()
+    dict_corpus_prob = get_corpus_prob_dict(list_corpus)
+    print dict_corpus_prob
+
+    # glass box test: get author_prob_dict()
+    dict_author_prob = get_author_prob_dict(list_target_values)
+    print dict_author_prob
+
+    # glass box test: get_cond_prob_dict()
+    dict_cond_prob = get_cond_prob_dict(list_corpus, tweet_np_matrix,
+                                        list_target_values)
+    print dict_cond_prob
+
+    # black box test: train()
+    data_set = train(FILE)
+    for data in data_set:
+        print data
 
     """
      # glass box test: get_scikit_fit_args()
@@ -566,12 +594,11 @@ def glassbox_tests():
     # glassbox test of train()
     result = train(FILE)
     """
-
     return True
 
 
 def main():
-    return glassbox_tests()
+    return tests()
 
 if __name__ == '__main__':
     main()
