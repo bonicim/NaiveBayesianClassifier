@@ -2,7 +2,6 @@ import csv
 import string
 import re
 import numpy as np
-from sklearn.naive_bayes import GaussianNB
 import math
 
 FILE = 'tweets.csv'
@@ -10,6 +9,7 @@ DELIMITER = ','
 QUOTECHAR = '"'
 SPLITTER = "\W+"
 MODE = 'rb'
+SMALL_PROB = 0.00000001
 
 # A Naive Bayeasian Classfier that classifies a list of tweets based on the
 # given categories in the list
@@ -73,41 +73,6 @@ def read_data(document):
     return list_tweets
 
 
-def get_target_values_list(list_tweets):
-    """
-    Creates a vector of the author for each tweet in LIST_TWEETS;
-    :param list_tweets: a list of tweets in the form of a tuple
-
-        example:
-
-        [ (donald : "Build a wall."),
-          (hillary : "Break the ceiling.") ]
-
-    :return: a list of two objects: a numpy array of the vector of tweet
-    authors and a dictionary containing the index to author mapping
-
-        example:
-
-        [ [0, 1, 1, 0], {0 : "donald", 1 : "hillary"} ]
-    """
-    index = 0
-    dict_category_key = {}
-    for tweet in list_tweets:
-        category = tweet[0]
-        if category not in dict_category_key:
-            dict_category_key[category] = index
-            index += 1
-
-    list_targets = []
-    for tweet in list_tweets:
-        category = tweet[0]
-        target = dict_category_key.get(category)
-        list_targets.append(target)
-    list_targets = np.array(list_targets)
-
-    return [list_targets, dict_category_key]
-
-
 def get_corpus_list(list_tweets):
     """
     Creates a list of tuples that contain every unique word and its
@@ -162,8 +127,8 @@ def get_tweet_list_bag(list_tweets):
 
         example:
 
-        [ ("donald", {"wall" : 5, "rich" : 2}),
-          ("hillary", {"glass" : 5, "emails" : 2, "poor" : 8}) ]
+        [ ("donald", {"wall" : 1, "build" : 1}),
+          ("hillary", {"break" : 1, "ceiling" : 1, "the" : 1}) ]
     """
     list_tweet_bag = []
 
@@ -179,41 +144,76 @@ def get_tweet_list_bag(list_tweets):
     return list_tweet_bag
 
 
-def get_tweet_list_word_count(corpus, tweet_list_bag):
+def get_author_tgt_dict(list_tweets):
     """
-    Creates a list of word frequency for every tweet in TWEET_LIST_BAG
+    Creates a dictionary of index to class pairs from LIST_TWEETS.
+    :param list_tweets: a list of tweets in the form of a tuple
+
+        example:
+
+        [ (donald : "Build a wall."),
+          (hillary : "Break the ceiling.") ]
+
+    :return: a dictionary containing all index to class pairs.
+
+        example:
+
+        { "donald": 0, "hillary": 1}
+    """
+    tgt = 0
+    dict_author_tgt = {}
+    for tweet in list_tweets:
+        author = tweet[0]
+        if author not in dict_author_tgt:
+            dict_author_tgt[author] = tgt
+            tgt += 1
+    return dict_author_tgt
+
+
+def get_tweet_list_frequencies_numpy_array(list_corpus, list_tweet_bag,
+                                           dict_author_tgt):
+    """
+    Creates a list of word frequency for every tweet in LIST_TWIST_BAG
     based upon the master word list in CORPUS.
-    :param corpus: a list of unique word tuples
+    :param list_corpus: a list of unique word tuples
 
         example:
 
         [ ("dog", 5), ("cat", 2) ]
 
-    :param tweet_list_bag: a list of tweet bags and associated authors
+    :param list_tweet_bag: a list of tweet bags and associated authors
 
         example:
 
         [ ("donald", {"wall" : 5, "rich" : 2}),
           ("hillary", {"glass" : 5, "emails" : 2, "poor" : 8}) ]
 
-    :return: a numpy array object of the list of word frequencies of all tweets
+    :param dict_author_tgt:
+
+    :return: a numpy array object of the list of author target values
+    and word frequencies of all tweets
 
         example:
 
-        [ [3, 0, 5, 6, 7]
-          [13, 60, 53, 2, 0]
-          [39, 0, 5, 0, 0] ]
+        [ [0, 3, 0, 5, 6, 7]
+          [1, 13, 60, 53, 2, 0]
+          [0, 39, 0, 5, 0, 0] ]
     """
     list_master = []
 
-    for tweet in tweet_list_bag:
-        bag_dict = tweet[1]
+    for tweet in list_tweet_bag:
         list_tweet_val = []
-        for word_tuple in corpus:
+        bag_author = tweet[0]
+        if bag_author in dict_author_tgt:
+            tgt = dict_author_tgt.get(bag_author)
+            list_tweet_val.append(tgt)
+
+        bag_dict = tweet[1]
+        for word_tuple in list_corpus:
             word = word_tuple[0]
             val = 0.0
             if word in bag_dict:
-                val = bag_dict[word]
+                val = bag_dict[word] + 0.0
             list_tweet_val.append(val)
         list_master.append(list_tweet_val)
 
@@ -243,20 +243,21 @@ def get_scikit_fit_args(list_tweets):
            [0, 1, 1, 0] ]
 
     """
-    corpus = get_corpus_list(list_tweets)
+    corpus_list = get_corpus_list(list_tweets)
     tweet_list_bag = get_tweet_list_bag(list_tweets)
-    np_array = get_tweet_list_word_count(corpus, tweet_list_bag)
-    np_x_arg = np_array
-
-    list_target_val = get_target_values_list(list_tweets)
-    np_y_arg = list_target_val[0]
-
-    args = [np_x_arg, np_y_arg]
-    return args
+    author_tgt_dict = get_author_tgt_dict(list_tweets)
+    numpy_array = get_tweet_list_frequencies_numpy_array(corpus_list,
+                                                         tweet_list_bag,
+                                                         author_tgt_dict)
+    numpy_shape = np.shape(numpy_array)
+    width = numpy_shape[1]
+    print "Width is: ", width
+    fit_x_arg = (numpy_array[:, 1:width])
+    fit_y_arg = (numpy_array[:, 0])
+    return [fit_x_arg, fit_y_arg]
 
 
 def get_corpus_prob_dict(corpus_list):
-    # TODO: Implement
     """
     Calculates probabilities for every word in CORPUS_LIST
     :param corpus_list: a list of unique word tuples
@@ -268,29 +269,57 @@ def get_corpus_prob_dict(corpus_list):
     :return: a dictionary comprised of word to probability pairs
     """
     dict_corpus_prob = {}
+    temp_list = map(lambda x: x[1], corpus_list)
+    total_count = sum(temp_list)
+
+    for word_tuple in corpus_list:
+        word_key = word_tuple[0]
+        word_freq = word_tuple[1]
+        prob_value = word_freq / total_count
+        dict_corpus_prob[word_key] = prob_value
+
     return dict_corpus_prob
 
 
-def get_author_prob_dict(list_target_values):
-    # TODO: Implement
+def get_author_prob_dict(list_tweets):
     """
     Calculates probabilities for every author in LIST_TARGET_VALUES
-    :param list_target_values: a list of two objects: a numpy array of the
-    vector of tweet authors and a dictionary containing the index to author
-    mapping
+
+    :param list_tweets: list of tweet tuples consisting of the author and tweet
 
         example:
 
-        [ [0, 1, 1, 0], {0 : "donald", 1 : "hillary"} ]
+        [ ("donald", "Make America Great Again."),
+          ("hillary", "I'm with Her.") ]
+
+    :param dict_author_tgt:
+
+        example:
+
+        { "donald": 0, "hillary": 1}
 
     :return: a dictionary comprised of author to probability pairs
     """
 
     dict_author_prob = {}
+    total_tweets = len(list_tweets)
+
+    for tweet in list_tweets:
+        cur_author = tweet[0]
+        if cur_author in dict_author_prob:
+            dict_author_prob[cur_author] = dict_author_prob.get(cur_author) \
+                                           + 1.0
+        else:
+            dict_author_prob[cur_author] = 1.0
+
+    for author, count in dict_author_prob.items():
+        print "Total tweets by ", author, " is: ", count
+        dict_author_prob[author] = count / total_tweets
+        print "Probability of ", author, " is: ", dict_author_prob.get(author)
     return dict_author_prob
 
 
-def get_cond_prob_dict(corpus_list, tweet_np_matrix, target_val_list):
+def get_cond_prob_dict(corpus_list, tweet_np, target_val_list):
     # TODO: Implement
     """
     Calculates conditional probabilities for all categories in TARGET_VAL_LIST
@@ -300,7 +329,7 @@ def get_cond_prob_dict(corpus_list, tweet_np_matrix, target_val_list):
 
         [ ("dog", 5), ("cat", 2) ]
 
-    :param tweet_np_matrix: a numpy array object of the list of
+    :param tweet_np: a numpy array object of the list of
     word frequencies of all tweets
 
         example:
@@ -325,6 +354,7 @@ def get_cond_prob_dict(corpus_list, tweet_np_matrix, target_val_list):
           "hillary" : { "predator" : .32, "democrat" : .119} }
     """
     dict_author_cond_prob = {}
+
     return dict_author_cond_prob
 
 
@@ -358,11 +388,12 @@ def cleanup(list_tweets):
     """
 
     list_corpus = get_corpus_list(list_tweets)
-    list_target_values = get_target_values_list(list_tweets)
     tweet_list_bag = get_tweet_list_bag(list_tweets)
-    tweet_np_matrix = get_tweet_list_word_count(list_corpus, tweet_list_bag)
-
-    return [list_corpus, list_target_values, tweet_np_matrix]
+    dict_author_tgt = get_author_tgt_dict(list_tweets)
+    tweet_np_matrix = get_tweet_list_frequencies_numpy_array(list_corpus,
+                                                             tweet_list_bag,
+                                                             dict_author_tgt)
+    return [list_corpus, dict_author_tgt, tweet_np_matrix]
 
 
 def train(document):
@@ -387,13 +418,13 @@ def train(document):
     list_data = cleanup(list_tweets)
 
     list_corpus = list_data[0]
-    list_target_values = list_data[1]
+    dict_author_tgt = list_data[1]
     tweet_np_matrix = list_data[2]
 
     dict_corpus_prob = get_corpus_prob_dict(list_corpus)
-    dict_author_prob = get_author_prob_dict(list_target_values)
+    dict_author_prob = get_author_prob_dict(list_tweets)
     dict_cond_prob = get_cond_prob_dict(list_corpus, tweet_np_matrix,
-                                        list_target_values)
+                                        dict_author_tgt)
 
     data_set = [dict_corpus_prob, dict_author_prob, dict_cond_prob]
     return data_set
@@ -453,8 +484,57 @@ def tests():
     Black and glass box testing for all methods
     :return: True
     """
+    # glass box test: read()
     list_tweets = read_data(FILE)
 
+    print "The total number of tweets is: ", len(list_tweets)
+
+    for author, tweet in list_tweets:
+        print author
+        print tweet
+        print "\n"
+        break
+
+    list_corpus = get_corpus_list(list_tweets)
+    print "The total number of unique words is: ", len(list_corpus)
+    for tup in list_corpus:
+        print tup[0]
+        print tup[1]
+        print "\n"
+        break
+
+    list_tweet_bag = get_tweet_list_bag(list_tweets)
+    print "The total number of tweets is: ", len(list_tweet_bag)
+    for tup in list_tweet_bag:
+        print tup[0]
+        print tup[1]
+        print "\n"
+        break
+
+    dict_auth_tgt = get_author_tgt_dict(list_tweets)
+    for auth, tgt in dict_auth_tgt.items():
+        print auth
+        print tgt
+        print "\n"
+
+    # numpy_array = get_tweet_list_frequencies_numpy_array(list_corpus,
+    #                                                    list_tweet_bag,
+    #                                                   dict_auth_tgt)
+    # print (numpy_array)
+
+    scikit_args = get_scikit_fit_args(list_tweets)
+    print "Printing freq matrix"
+    print scikit_args[0]
+    print "shape is: ", np.shape(scikit_args[0])
+    print "\n"
+    print "Printing target vector"
+    print scikit_args[1]
+    print "shape is: ", np.shape(scikit_args[1])
+
+    dict_author_prob = get_author_prob_dict(list_tweets)
+
+
+    """
     # black box test: cleanup()
     list_prob_args = cleanup(list_tweets)
 
@@ -479,6 +559,7 @@ def tests():
     data_set = train(FILE)
     for data in data_set:
         print data
+    """
 
     """
      # glass box test: get_scikit_fit_args()
@@ -489,9 +570,12 @@ def tests():
 
     """
     # glass box test: get_tweet_list_word_count()
-    corpus = get_corpus(list_tweets)
+    corpus = get_corpus_list(list_tweets)
     tweet_list_bag = get_tweet_list_bag(list_tweets)
-    np_array = get_tweet_list_word_count(corpus, tweet_list_bag)
+    dict_author_tgt = get_author_tgt_dict(list_tweets)
+    np_array = get_tweet_list_frequencies_numpy_array(corpus,
+                                                      tweet_list_bag,
+                                                      dict_author_tgt)
     print np_array
     """
 
@@ -542,16 +626,6 @@ def tests():
     for word, freq in bag.items():
         print "word: ", word
         print "freq: ", freq
-    """
-
-    """
-    # glass box test: read()
-    list_all_tweets = read(FILE)
-
-    for author, tweet in list_all_tweets:
-        print author
-        print tweet
-        print "\n"
     """
 
     """
