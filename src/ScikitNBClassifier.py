@@ -11,11 +11,8 @@ MODE = 'rb'
 DELIMITER = ','
 QUOTECHAR = '"'
 SPLITTER = "\W+"
-TEST_DATA = ["Great afternoon in Little Havana with Hispanic community "
-             "leaders. Thank you for your support!",
-             "The question in this election: Who can put the plans into "
-             "action that will make your life better?"]
-TEST_TARGET = ['realDonaldTrump', 'HillaryClinton']
+TEST_DATA = 'test_data.csv'
+TEST_TARGET = ['HillaryClinton', 'realDonaldTrump']
 
 
 def main():
@@ -36,7 +33,12 @@ def main():
     text_clf = text_clf.fit(data, target)
 
     # test the classfier against some testing data
-    predicted_target = text_clf.predict(TEST_DATA)
+    with open(TEST_DATA, MODE) as csvfile:
+        reader = csv.reader(csvfile, delimiter=DELIMITER, quotechar=QUOTECHAR)
+        next(reader, None)
+        test_data_list = map(lambda tweet: tweet[1], reader)
+
+    predicted_target = text_clf.predict(test_data_list)
     score = np.mean(predicted_target == TEST_TARGET)
 
     # printing reports
