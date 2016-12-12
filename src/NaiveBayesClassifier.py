@@ -277,8 +277,8 @@ def get_scikit_fit_args(list_tweets):
                                                          author_tgt_dict)
     numpy_shape = np.shape(numpy_array)
     width = numpy_shape[1]
-    fit_x_arg = (numpy_array[:, 1:width])
-    fit_y_arg = (numpy_array[:, 0])
+    fit_x_arg = numpy_array[:, 1:width]
+    fit_y_arg = numpy_array[:, 0]
     return [fit_x_arg, fit_y_arg]
 
 
@@ -710,8 +710,8 @@ def test_evaluation():
 
 
 def main():
-    # return test_evaluation()
-    return test_predict()
+    return test_evaluation()
+    # return test_predict()
     # return test_train()
     # return test_scikit()
     # return tests()

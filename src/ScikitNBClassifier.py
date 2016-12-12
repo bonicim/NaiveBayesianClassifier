@@ -14,6 +14,9 @@ QUOTECHAR = '"'
 SPLITTER = "\W+"
 TEST_DATA = 'test_data.csv'
 TEST_TARGET = ['HillaryClinton', 'realDonaldTrump']
+TEST_SMALL_DATA = ["The question in this election: Who can put the plans "
+                   "into action that will make your life better?",
+                   "It wasn't Matt Lauer that hurt Hillary last night. It was her very dumb answer about emails &amp; the veteran who said she should be in jail."]
 
 
 def main():
@@ -22,8 +25,10 @@ def main():
         reader = csv.reader(csvfile, delimiter=DELIMITER, quotechar=QUOTECHAR)
         next(reader, None)
         list_tweets = map(lambda tweet: (tweet[1], tweet[2]), reader)
+        test_data_list = map(lambda tweet: tweet[2], reader)
 
     args = nbc.get_scikit_fit_args(list_tweets)
+
     data_x = args[0]
     target_y = args[1]
 
@@ -35,13 +40,9 @@ def main():
     text_clf = text_clf.fit(data_x, target_y)
 
     # test the classfier against some testing data
-    with open(TEST_DATA, MODE) as csvfile:
-        reader = csv.reader(csvfile, delimiter=DELIMITER, quotechar=QUOTECHAR)
-        next(reader, None)
-        test_data_list = map(lambda tweet: tweet[1], reader)
 
     predicted_target = text_clf.predict(test_data_list)
-    score = np.mean(predicted_target == TEST_TARGET)
+    score = np.mean(predicted_target == target_y)
 
     # printing reports
     print "The score is: ", score
