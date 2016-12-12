@@ -1,3 +1,4 @@
+import NaiveBayesClassifier as nbc
 import numpy as np
 import csv
 from sklearn.pipeline import Pipeline
@@ -22,15 +23,16 @@ def main():
         next(reader, None)
         list_tweets = map(lambda tweet: (tweet[1], tweet[2]), reader)
 
-    data = map(lambda x: x[1], list_tweets)
-    target = map(lambda x: x[0], list_tweets)
+    args = nbc.get_scikit_fit_args(list_tweets)
+    data_x = args[0]
+    target_y = args[1]
 
     # build classifier
     text_clf = Pipeline([('vect', CountVectorizer()),
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultinomialNB()),
                          ])
-    text_clf = text_clf.fit(data, target)
+    text_clf = text_clf.fit(data_x, target_y)
 
     # test the classfier against some testing data
     with open(TEST_DATA, MODE) as csvfile:

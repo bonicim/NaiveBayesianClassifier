@@ -4,6 +4,13 @@ import re
 import numpy as np
 import math
 from sklearn.metrics import classification_report
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.naive_bayes import GaussianNB
+from sklearn import metrics
+from nltk.corpus import stopwords
+
 
 FILE = 'tweets.csv'
 DELIMITER = ','
@@ -16,6 +23,7 @@ TEST_DONALD = "Great afternoon in Little Havana with Hispanic community " \
 TEST_HILLARY = "The question in this election: Who can put the plans into " \
                "action that will make your life better?"
 TEST_DATA = 'test_data.csv'
+TEST_TARGET = ['HillaryClinton', 'realDonaldTrump']
 
 
 # A Naive Bayeasian Classfier that classifies a list of tweets based on the
@@ -28,10 +36,14 @@ def clean_tweet(tweet):
     :param tweet: a string
     :return: a string that has been cleansed
     """
-
+    cleaned_tweet = tweet.lower()
+    cleaned_tweet = re.sub(r"http\S+", "", cleaned_tweet)
+    cleaned_tweet = ' '.join(cleaned_tweet.split())
     punctuation_set = set(string.punctuation)
-    cleaned_tweet = ''.join(filter(lambda x: x not in punctuation_set, tweet))
-    # TODO: stop words, spaces and such
+    cleaned_tweet = ''.join(filter(lambda x: x not in punctuation_set, cleaned_tweet))
+    stop_words = set(stopwords.words('english'))
+    cleaned_tweet = filter(lambda x: x not in stop_words, cleaned_tweet.split())
+    cleaned_tweet = ' '.join(cleaned_tweet)
     return cleaned_tweet
 
 
@@ -112,7 +124,6 @@ def get_corpus_list(list_tweets):
         cleaned_tweet = clean_tweet(tweet_text)
         list_words_in_tweet = tokenize_tweet(cleaned_tweet)
         bag = make_tweet_bag(list_words_in_tweet)
-
         # update the total tally for each word
         for word, count in bag.items():
             if word not in dict_corpus:
@@ -544,13 +555,31 @@ def evaluation(document, test_data):
 def test_scikit():
     list_tweets = read_data(FILE)
     scikit_args = get_scikit_fit_args(list_tweets)
-    print "Printing freq matrix"
-    print scikit_args[0]
+    # print "Printing freq matrix"
+    # print scikit_args[0]
     print "shape is: ", np.shape(scikit_args[0])
     print "\n"
-    print "Printing target vector"
-    print scikit_args[1]
+    # print "Printing target vector"
+    # print scikit_args[1]
     print "shape is: ", np.shape(scikit_args[1])
+    text_clf = Pipeline([('vect', CountVectorizer()),
+                         ('tfidf', TfidfTransformer()),
+                         ('clf', GaussianNB()),
+                         ])
+    text_clf = text_clf.fit(scikit_args[0], scikit_args[1])
+    with open(TEST_DATA, MODE) as csvfile:
+        reader = csv.reader(csvfile, delimiter=DELIMITER, quotechar=QUOTECHAR)
+        next(reader, None)
+        test_data_list = map(lambda tweet: tweet[1], reader)
+    predicted_target = text_clf.predict(test_data_list)
+    score = np.mean(predicted_target == TEST_TARGET)
+
+    # printing reports
+    print "The score is: ", score
+    print(metrics.classification_report(TEST_TARGET, predicted_target,
+                                        target_names=TEST_TARGET))
+    print "\n", "Confusion matrix: ", "\n"
+    print metrics.confusion_matrix(TEST_TARGET, predicted_target)
     return 1
 
 
@@ -681,8 +710,8 @@ def test_evaluation():
 
 
 def main():
-    return test_evaluation()
-    # return test_predict()
+    # return test_evaluation()
+    return test_predict()
     # return test_train()
     # return test_scikit()
     # return tests()
