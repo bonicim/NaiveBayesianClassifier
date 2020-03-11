@@ -1,4 +1,5 @@
 from csv import reader as csvreader
+import string
 
 
 class DataProcessor:
@@ -15,9 +16,15 @@ class DataProcessor:
         return tweets
 
     def tokenize(self):
+        remove_punctuation = lambda word: word.translate(
+            str.maketrans("", "", string.punctuation)
+        )
         if self._tweets is None:
             self.read()
 
-        tweets_tokenized = [(tweet[0], tweet[1].split()) for tweet in self._tweets]
+        tweets_tokenized = [
+            (tweet[0], [remove_punctuation(word).lower() for word in tweet[1].split()])
+            for tweet in self._tweets
+        ]
 
         return tweets_tokenized
