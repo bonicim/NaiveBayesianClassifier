@@ -12,18 +12,22 @@ from sklearn import metrics
 from nltk.corpus import stopwords
 
 
-FILE = 'tweets.csv'
-DELIMITER = ','
+FILE = "tweets.csv"
+DELIMITER = ","
 QUOTECHAR = '"'
 SPLITTER = "\W+"
-MODE = 'rb'
+MODE = "r"
 SMALL_PROB = 0.00000001
-TEST_DONALD = "Great afternoon in Little Havana with Hispanic community " \
-             "leaders. Thank you for your support!"
-TEST_HILLARY = "The question in this election: Who can put the plans into " \
-               "action that will make your life better?"
-TEST_DATA = 'test_data.csv'
-TEST_TARGET = ['HillaryClinton', 'realDonaldTrump']
+TEST_DONALD = (
+    "Great afternoon in Little Havana with Hispanic community "
+    "leaders. Thank you for your support!"
+)
+TEST_HILLARY = (
+    "The question in this election: Who can put the plans into "
+    "action that will make your life better?"
+)
+TEST_DATA = "test_data.csv"
+TEST_TARGET = ["HillaryClinton", "realDonaldTrump"]
 
 
 # A Naive Bayeasian Classfier that classifies a list of tweets based on the
@@ -38,12 +42,12 @@ def clean_tweet(tweet):
     """
     cleaned_tweet = tweet.lower()
     cleaned_tweet = re.sub(r"http\S+", "", cleaned_tweet)
-    cleaned_tweet = ' '.join(cleaned_tweet.split())
+    cleaned_tweet = " ".join(cleaned_tweet.split())
     punctuation_set = set(string.punctuation)
-    cleaned_tweet = ''.join(filter(lambda x: x not in punctuation_set, cleaned_tweet))
-    stop_words = set(stopwords.words('english'))
+    cleaned_tweet = "".join(filter(lambda x: x not in punctuation_set, cleaned_tweet))
+    stop_words = set(stopwords.words("english"))
     cleaned_tweet = filter(lambda x: x not in stop_words, cleaned_tweet.split())
-    cleaned_tweet = ' '.join(cleaned_tweet)
+    cleaned_tweet = " ".join(cleaned_tweet)
     return cleaned_tweet
 
 
@@ -84,7 +88,6 @@ def read_data(document):
         [ ("donald", "Make America Great Again."),
           ("hillary", "I'm with Her.") ]
     """
-
     with open(document, MODE) as csvfile:
         reader = csv.reader(csvfile, delimiter=DELIMITER, quotechar=QUOTECHAR)
         next(reader, None)
@@ -196,8 +199,9 @@ def get_author_tgt_dict(list_tweets):
     return dict_author_tgt
 
 
-def get_tweet_list_frequencies_numpy_array(list_corpus, list_tweet_bag,
-                                           dict_author_tgt):
+def get_tweet_list_frequencies_numpy_array(
+    list_corpus, list_tweet_bag, dict_author_tgt
+):
     """
     Creates a list of word frequency for every tweet in LIST_TWIST_BAG
     based upon the master word list in CORPUS.
@@ -225,21 +229,22 @@ def get_tweet_list_frequencies_numpy_array(list_corpus, list_tweet_bag,
           [1, 13, 60, 53, 2, 0]
           [0, 39, 0, 5, 0, 0] ]
     """
-    list_master = []
+    list_master = []  # list of lists
 
     for tweet in list_tweet_bag:
+        # mark the tweet with the assigned author
         list_tweet_val = []
         bag_author = tweet[0]
         if bag_author in dict_author_tgt:
             tgt = dict_author_tgt.get(bag_author)
             list_tweet_val.append(tgt)
 
-        bag_dict = tweet[1]
+        tweet_bag = tweet[1]
         for word_tuple in list_corpus:
             word = word_tuple[0]
             val = 0.0
-            if word in bag_dict:
-                val = bag_dict[word] + 0.0
+            if word in tweet_bag:
+                val = tweet_bag[word] + 0.0
             list_tweet_val.append(val)
         list_master.append(list_tweet_val)
 
@@ -272,9 +277,9 @@ def get_scikit_fit_args(list_tweets):
     corpus_list = get_corpus_list(list_tweets)
     tweet_list_bag = get_tweet_list_bag(list_tweets)
     author_tgt_dict = get_author_tgt_dict(list_tweets)
-    numpy_array = get_tweet_list_frequencies_numpy_array(corpus_list,
-                                                         tweet_list_bag,
-                                                         author_tgt_dict)
+    numpy_array = get_tweet_list_frequencies_numpy_array(
+        corpus_list, tweet_list_bag, author_tgt_dict
+    )
     numpy_shape = np.shape(numpy_array)
     width = numpy_shape[1]
     fit_x_arg = numpy_array[:, 1:width]
@@ -332,8 +337,7 @@ def get_author_prob_dict(list_tweets):
     for tweet in list_tweets:
         cur_author = tweet[0]
         if cur_author in dict_author_prob:
-            dict_author_prob[cur_author] = dict_author_prob.get(cur_author) \
-                                           + 1.0
+            dict_author_prob[cur_author] = dict_author_prob.get(cur_author) + 1.0
         else:
             dict_author_prob[cur_author] = 1.0
 
@@ -434,13 +438,12 @@ def cleanup(list_tweets):
           [13, 60, 53, 2, 0]
           [39, 0, 5, 0, 0] ]
     """
-
     list_corpus = get_corpus_list(list_tweets)
     tweet_list_bag = get_tweet_list_bag(list_tweets)
     dict_author_tgt = get_author_tgt_dict(list_tweets)
-    tweet_np_matrix = get_tweet_list_frequencies_numpy_array(list_corpus,
-                                                             tweet_list_bag,
-                                                             dict_author_tgt)
+    tweet_np_matrix = get_tweet_list_frequencies_numpy_array(
+        list_corpus, tweet_list_bag, dict_author_tgt
+    )
     return [list_corpus, dict_author_tgt, tweet_np_matrix]
 
 
@@ -465,14 +468,19 @@ def train(document):
     list_tweets = read_data(document)
     list_data = cleanup(list_tweets)
 
-    list_corpus = list_data[0]
-    dict_author_tgt = list_data[1]
-    tweet_np_matrix = list_data[2]
+    list_corpus = list_data[0]  # list of class to tweets
+    dict_author_tgt = list_data[1]  # map of author to random integer
+    tweet_np_matrix = list_data[
+        2
+    ]  # list of list of author, word count, word count, ...
 
-    dict_corpus_prob = get_corpus_prob_dict(list_corpus)
-    dict_author_prob = get_author_prob_dict(list_tweets)
-    dict_cond_prob = get_cond_prob_dict(list_corpus, tweet_np_matrix,
-                                        dict_author_tgt)
+    dict_corpus_prob = get_corpus_prob_dict(
+        list_corpus
+    )  # map of word to prob entire words
+    dict_author_prob = get_author_prob_dict(
+        list_tweets
+    )  # map of author probabilities in tweet data
+    dict_cond_prob = get_cond_prob_dict(list_corpus, tweet_np_matrix, dict_author_tgt)
 
     data_set = [dict_corpus_prob, dict_author_prob, dict_cond_prob]
     return data_set
@@ -507,15 +515,21 @@ def predict(data_set, tweet):
     list_token_tweet = tokenize_tweet(tweet)
     tweet_bag = make_tweet_bag(list_token_tweet)
 
+    # does what hmap does, which is determine the probability of each possible outcome
     for author, prob in dict_author_prob.items():
         log_prob_author_score = 0.0
-        dict_word_cond_prob = dict_cond_prob.get(author)
+        dict_word_cond_prob = dict_cond_prob.get(
+            author
+        )  # The probability table of an author
         for word, count in tweet_bag.items():
-            prob_word = dict_corpus_prob.get(word)
-            prob_word_author = dict_word_cond_prob.get(word)
+            prob_word = dict_corpus_prob.get(
+                word
+            )  # The probablity of the word even occuring in the vocabulary given
+            prob_word_author = dict_word_cond_prob.get(
+                word
+            )  # the probability of the word said by the author
             if prob_word_author > 0:
-                log_prob_author_score += math.log(count * prob_word_author /
-                                                  prob_word)
+                log_prob_author_score += math.log(count * prob_word_author / prob_word)
         prob_author = dict_author_prob.get(author)
         log_prob_author_score = math.exp(log_prob_author_score + math.log(prob_author))
         result = (author, log_prob_author_score)
@@ -557,15 +571,17 @@ def test_scikit():
     scikit_args = get_scikit_fit_args(list_tweets)
     # print "Printing freq matrix"
     # print scikit_args[0]
-    print "shape is: ", np.shape(scikit_args[0])
-    print "\n"
+    print(f"shape: {np.shape(scikit_args[0])}")
     # print "Printing target vector"
     # print scikit_args[1]
-    print "shape is: ", np.shape(scikit_args[1])
-    text_clf = Pipeline([('vect', CountVectorizer()),
-                         ('tfidf', TfidfTransformer()),
-                         ('clf', GaussianNB()),
-                         ])
+    print(f"shape: {np.shape(scikit_args[1])}")
+    text_clf = Pipeline(
+        [
+            ("vect", CountVectorizer()),
+            ("tfidf", TfidfTransformer()),
+            ("clf", GaussianNB()),
+        ]
+    )
     text_clf = text_clf.fit(scikit_args[0], scikit_args[1])
     with open(TEST_DATA, MODE) as csvfile:
         reader = csv.reader(csvfile, delimiter=DELIMITER, quotechar=QUOTECHAR)
@@ -575,11 +591,14 @@ def test_scikit():
     score = np.mean(predicted_target == TEST_TARGET)
 
     # printing reports
-    print "The score is: ", score
-    print(metrics.classification_report(TEST_TARGET, predicted_target,
-                                        target_names=TEST_TARGET))
-    print "\n", "Confusion matrix: ", "\n"
-    print metrics.confusion_matrix(TEST_TARGET, predicted_target)
+    print(f"Score: {score}")
+    print(
+        metrics.classification_report(
+            TEST_TARGET, predicted_target, target_names=TEST_TARGET
+        )
+    )
+    print(f"Confusion matrix:\n")
+    print(f"{metrics.confusion_matrix(TEST_TARGET, predicted_target)}")
     return 1
 
 
@@ -589,25 +608,24 @@ def test_train():
     dict_author_prob = data_set[1]
     dict_cond_prob = data_set[2]
 
-    print "\n", "This is the corpus dictionary"
+    print("This is the corpus dictionary")
     for key, value in dict_corpus_prob.items():
-        print "\n", "The key is: ", key
-        print "The val is: ", value
+        print(f"Key: {key}")
+        print(f"Val: {value}")
         break
 
-    print "\n", "This is the author prob dictionary"
+    print(f"This is the author prob dictionary")
     for key, value in dict_author_prob.items():
-        print "\n", "The key is: ", key
-        print "The val is: ", value
+        print(f"Key: {key}")
+        print(f"Val: {value}")
 
-    print "\n", "This is the cond prob dictionary"
+    print("This is the cond prob dictionary")
     for key, value in dict_cond_prob.items():
-        print "\n", "The key is: ", key
+        print("\n", "The key is: ", key)
         for word, prob in value.items():
-            print "The word is: ", word
-            print "The prob is: ", prob
+            print(f"Word: {word}")
+            print(f"Prob: {prob}")
             break
-
     return 1
 
 
@@ -618,74 +636,74 @@ def tests():
     """
     list_tweets = read_data(FILE)
 
-    print "The total number of tweets is: ", len(list_tweets)
+    print(f"The total number of tweets: {len(list_tweets)}")
 
     for author, tweet in list_tweets:
-        print author
-        print tweet
-        print "\n"
+        print(author)
+        print(tweet)
+        print("\n")
         break
 
     list_corpus = get_corpus_list(list_tweets)
-    print "The total number of unique words is: ", len(list_corpus)
+    print(f"The total number of unique words: {len(list_corpus)}")
     for tup in list_corpus:
-        print tup[0]
-        print tup[1]
-        print "\n"
+        print(tup[0])
+        print(tup[1])
+        print("\n")
         break
 
     list_tweet_bag = get_tweet_list_bag(list_tweets)
-    print "The total number of tweets is: ", len(list_tweet_bag)
+    print(f"The total number of tweets: {len(list_tweet_bag)}")
     for tup in list_tweet_bag:
-        print tup[0]
-        print tup[1]
-        print "\n"
+        print(tup[0])
+        print(tup[1])
+        print("\n")
         break
 
     dict_auth_tgt = get_author_tgt_dict(list_tweets)
     for auth, tgt in dict_auth_tgt.items():
-        print auth
-        print tgt
-        print "\n"
+        print(auth)
+        print(tgt)
+        print("\n")
 
-    tweet_np = get_tweet_list_frequencies_numpy_array(list_corpus,
-                                                      list_tweet_bag,
-                                                      dict_auth_tgt)
+    tweet_np = get_tweet_list_frequencies_numpy_array(
+        list_corpus, list_tweet_bag, dict_auth_tgt
+    )
     numpy_shape = np.shape(tweet_np)
     width = numpy_shape[1]
-    fit_x_arg = (tweet_np[:, 1:width])
-    fit_y_arg = (tweet_np[:, 0])
-    print "The numpy vector of target: "
-    print (fit_y_arg)
-    print "\n", "The numpy array of freq count of all words: "
-    print (fit_x_arg)
+    fit_x_arg = tweet_np[:, 1:width]
+    fit_y_arg = tweet_np[:, 0]
+    print("The numpy vector of target: ")
+    print(fit_y_arg)
+    print("\n", "The numpy array of freq count of all words: ")
+    print(fit_x_arg)
 
     dict_corpus_prob = get_corpus_prob_dict(list_corpus)
     for key, value in dict_corpus_prob.items():
-        print "\n"
-        print "The word is: ", key
-        print "The prob is: ", value
+        print("\n")
+        print("The word is: ", key)
+        print("The prob is: ", value)
     totalprob = sum(dict_corpus_prob.values())
-    print "\n", "The sum of all prob is: ", totalprob
+    print("\n", "The sum of all prob is: ", totalprob)
 
     dict_author_prob = get_author_prob_dict(list_tweets)
     for key, value in dict_author_prob.items():
-        print "\n"
-        print "The author is: ", key
-        print "The prob is: ", value
+        print("\n")
+        print("The author is: ", key)
+        print("The prob is: ", value)
     totalprob = sum(dict_author_prob.values())
-    print "\n", "The sum of all prob is: ", totalprob
+    print("\n", "The sum of all prob is: ", totalprob)
 
     dict_cond_prob = get_cond_prob_dict(list_corpus, tweet_np, dict_auth_tgt)
     for key, value in dict_cond_prob.items():
-        print "\n"
-        print "The author is: ", key
+        print("\n")
+        print("The author is: ", key)
         for word, prob in value.items():
-            print "The word is: ", word, "\n"
-            print "The prob is: ", prob
+            print("The word is: ", word, "\n")
+            print("The prob is: ", prob)
             break
         totalprob = sum(value.values())
-        print "\n", "The sum of all prob is: ", totalprob
+        print("\n", "The sum of all prob is: ", totalprob)
 
     return True
 
@@ -693,30 +711,29 @@ def tests():
 def test_predict():
     data_set = train(FILE)
     result = predict(data_set, TEST_DONALD)
-    print "\n", "Prediction from first test: "
+    print("\n", "Prediction from first test: ")
     for item in result:
-        print "\n", item
+        print("\n", item)
     result = predict(data_set, TEST_HILLARY)
-    print "\n", "Prediction from second test: "
+    print("\n", "Prediction from second test: ")
     for item in result:
-        print "\n", item, "\n"
+        print("\n", item, "\n")
     return 1
 
 
 def test_evaluation():
     result = evaluation(FILE, TEST_DATA)
-    print result
+    print(result)
     return True
 
 
 def main():
-    return test_evaluation()
+    # return test_evaluation()
     # return test_predict()
     # return test_train()
     # return test_scikit()
-    # return tests()
+    return tests()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
