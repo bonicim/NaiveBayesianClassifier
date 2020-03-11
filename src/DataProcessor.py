@@ -7,9 +7,11 @@ class DataProcessor:
     def __init__(self, filename):
         self._filename = filename
 
-    def process(self):
+    def process(self, n_gram_size=None):
+        if n_gram_size is None:
+            n_gram_size = 1
         tweets = self._read()
-        tweets = self._tokenize(tweets)
+        tweets = self._tokenize(tweets, n_gram_size)
         tweets = self._remove_stopwords(tweets)
 
         return tweets
@@ -22,15 +24,37 @@ class DataProcessor:
 
         return tweets
 
-    def _tokenize(self, tweets):
+    def _tokenize(self, tweets, n_gram_size):
         remove_punctuation = lambda word: word.translate(
             str.maketrans("", "", string.punctuation)
         )
 
-        return [
+        tweets = [
             (tweet[0], [remove_punctuation(word).lower() for word in tweet[1].split()])
             for tweet in tweets
         ]
+
+        tweets = self._tokenize_n_gram(tweets, n_gram_size)
+
+        return tweets
+
+    # TODO: write test for size greater than 1
+    def _tokenize_n_gram(self, tweets, n_gram_size):
+        if n_gram_size == 1:
+            return tweets
+
+        result = []
+        for author, tweet in tweets:
+            re_tokenized_tweet = []
+            end = len(tweet) - n_gram_size - 1
+            for i in range(end):
+                token = ""
+                for j in range(i, n_gram_size):
+                    token.join(tweet[j])
+                re_tokenized_tweet.append(token)
+            result.append((author, re_tokenized_tweet))
+
+        return result
 
     def _remove_stopwords(self, tweets_tokenized):
         stop_words = set(stopwords.words("english"))
