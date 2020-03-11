@@ -1,3 +1,4 @@
+from nltk.corpus import stopwords
 from csv import reader as csvreader
 import string
 
@@ -5,26 +6,35 @@ import string
 class DataProcessor:
     def __init__(self, filename):
         self._filename = filename
-        self._tweets = None
 
-    def read(self):
+    def process(self):
+        tweets = self._read()
+        tweets = self._tokenize(tweets)
+        tweets = self._remove_stopwords(tweets)
+
+        return tweets
+
+    def _read(self):
         with open(self._filename) as csvfile:
             reader = csvreader(csvfile, delimiter=",", quotechar='"')
             next(reader)
             tweets = [(row[1], row[2]) for row in reader]
-        self._tweets = tweets
+
         return tweets
 
-    def tokenize(self):
+    def _tokenize(self, tweets):
         remove_punctuation = lambda word: word.translate(
             str.maketrans("", "", string.punctuation)
         )
-        if self._tweets is None:
-            self.read()
 
-        tweets_tokenized = [
+        return [
             (tweet[0], [remove_punctuation(word).lower() for word in tweet[1].split()])
-            for tweet in self._tweets
+            for tweet in tweets
         ]
 
-        return tweets_tokenized
+    def _remove_stopwords(self, tweets_tokenized):
+        stop_words = set(stopwords.words("english"))
+        return [
+            (tweet[0], [word for word in tweet[1] if word not in stop_words])
+            for tweet in tweets_tokenized
+        ]
