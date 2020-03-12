@@ -1,6 +1,7 @@
 from nltk.corpus import stopwords
 from csv import reader as csvreader
 import string
+from collections import Counter
 
 
 class DataProcessor:
@@ -13,6 +14,7 @@ class DataProcessor:
         tweets = self._read()
         tweets = self._tokenize(tweets, n_gram_size)
         tweets = self._remove_stopwords(tweets)
+        tweets = self._make_bag_of_words(tweets)
 
         return tweets
 
@@ -50,7 +52,8 @@ class DataProcessor:
             for i in range(end):
                 token = ""
                 for j in range(i, n_gram_size):
-                    token.join(tweet[j])
+                    to_add = tweet[j].ljust(len(tweet[j]))
+                    token += token.join(to_add)
                 re_tokenized_tweet.append(token)
             result.append((author, re_tokenized_tweet))
 
@@ -62,3 +65,6 @@ class DataProcessor:
             (tweet[0], [word for word in tweet[1] if word not in stop_words])
             for tweet in tweets_tokenized
         ]
+
+    def _make_bag_of_words(self, tweets):
+        return [(author, Counter(tokens)) for author, tokens in tweets]
