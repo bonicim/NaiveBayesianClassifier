@@ -1,16 +1,13 @@
 from setuptools import find_packages, setup
 
 setup(
-    # required
     name="naive-bayesian-classifier",
     packages=["src"],
-    # package_dir={"": "src"},
     version="0.1.0",
     url="https://github.com/bonicim/NaiveBayesianClassifier",
-    # Metadata
     author="Mark Bonicillo",
     author_email="markabonicillo@gmail.com",
-    description="A simple implementation of a Naive Bayes Classifier",
+    description="A homegrown Naive Bayes Classifier for classifying Tweets",
     long_description="",
     license="GPLv3",
     classifiers=[
