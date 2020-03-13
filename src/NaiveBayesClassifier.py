@@ -553,6 +553,7 @@ def evaluation(document, test_data):
     """
     data_set = train(document)
     list_test_data = read_test_data(test_data)
+
     list_truth = map(lambda x: x[0], list_test_data)
     list_prediction = []
     list_test_data_predict = map(lambda x: x[1], list_test_data)

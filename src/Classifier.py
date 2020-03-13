@@ -1,5 +1,6 @@
 from collections import Counter
 from math import log, exp
+from sklearn.metrics import classification_report
 
 
 class Classifier:
@@ -40,4 +41,18 @@ class Classifier:
         hypothesis_prob = sorted(
             hypothesis_prob.items(), key=lambda t: t[1], reverse=True
         )
-        return (hypothesis_prob[0][0], exp(hypothesis_prob[0][1]))
+        hypothesis_prob = [(author, exp(prob)) for author, prob in hypothesis_prob]
+
+        print(f"\n\n{hypothesis_prob}")
+
+        return (hypothesis_prob[0][0], round(hypothesis_prob[0][1], 3))
+
+    def evaluation(self, test_data):
+        truth = [author for author, _ in test_data]
+        prediction = []
+
+        for _, tweet in test_data:
+            result = self.classify(tweet)
+            prediction.append(result[0])
+
+        return classification_report(truth, prediction)
