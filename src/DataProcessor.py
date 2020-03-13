@@ -68,3 +68,7 @@ class DataProcessor:
 
     def _make_bag_of_words(self, tweets):
         return [(author, Counter(tokens)) for author, tokens in tweets]
+
+    def generate_tweet_data(self):
+        tweets = self._read()
+        return [tweet for _, tweet in tweets]
