@@ -1,6 +1,7 @@
 from collections import Counter
 from math import log, exp
 from sklearn.metrics import classification_report
+import pprint
 
 
 class Classifier:
@@ -28,14 +29,13 @@ class Classifier:
             total_author_vocab = sum(author_vocab.values())
 
             for word, count in words.items():
-                if word not in self._vocab or len(word) <= 3:
-                    continue
-                prob_word = self._vocab.get(word) / total_vocab
-                prob_given_category = author_vocab.get(word, 0) / total_author_vocab
+                prob_given_category = (author_vocab.get(word, 0.0) + 1) / (
+                    total_author_vocab + total_vocab
+                )
 
                 if prob_given_category > 0:
                     author_prob = hypothesis_prob[author]
-                    author_prob += log(prob_given_category * count / prob_word)
+                    author_prob += log(prob_given_category)
                     hypothesis_prob[author] = author_prob
 
         hypothesis_prob = sorted(
@@ -43,9 +43,9 @@ class Classifier:
         )
         hypothesis_prob = [(author, exp(prob)) for author, prob in hypothesis_prob]
 
-        print(f"\n\n{hypothesis_prob}")
-
-        return (hypothesis_prob[0][0], round(hypothesis_prob[0][1], 3))
+        print("\n\n")
+        pprint.pprint(hypothesis_prob)
+        return hypothesis_prob[0][0]
 
     def evaluation(self, test_data):
         truth = [author for author, _ in test_data]
