@@ -1,3 +1,6 @@
+import math
+
+
 class Features:
     def __init__(self, data_processor):
         self._data_processor = data_processor
@@ -20,7 +23,7 @@ class Features:
             prior_prob[author] = count + 1
 
         for author, count in prior_prob.items():
-            prior_prob[author] = count / total_docs
+            prior_prob[author] = math.log(count / total_docs)
 
         return prior_prob
 

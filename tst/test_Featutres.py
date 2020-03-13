@@ -15,7 +15,10 @@ def features():
 
 
 def test_extract(features):
-    expected = {"realDonaldTrump": 0.5, "HillaryClinton": 0.5}
+    expected = {
+        "realDonaldTrump": -0.6931471805599453,
+        "HillaryClinton": -0.6931471805599453,
+    }
     expected_vocab = {
         "question": 1,
         "election": 1,
