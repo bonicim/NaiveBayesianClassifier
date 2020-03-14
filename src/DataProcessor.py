@@ -72,3 +72,6 @@ class DataProcessor:
     def generate_tweet_data(self):
         tweets = self._read()
         return [tweet for _, tweet in tweets]
+
+    def convert_data_to_list(self):
+        return self._read()

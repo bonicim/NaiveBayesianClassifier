@@ -47,6 +47,15 @@ class Classifier:
         pprint.pprint(hypothesis_prob)
         return hypothesis_prob[0][0]
 
+    def classify_collection_tweets(self, tweets):
+        prediction = []
+
+        for _, tweet in tweets:
+            predicted_author = self.classify(tweet)
+            prediction.append(predicted_author)
+
+        return prediction
+
     def evaluation(self, test_data):
         truth = [author for author, _ in test_data]
         prediction = []
