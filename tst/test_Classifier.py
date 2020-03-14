@@ -26,7 +26,7 @@ def test_small_data_should_predict_donald(classifier_small):
 @pytest.fixture
 def classifier_large_data_set():
     test_data_path = path.abspath(
-        path.join(path.dirname(__file__), "..", "data", "tweets.csv")
+        path.join(path.dirname(__file__), "..", "data", "training_data.csv")
     )
     classifier = Classifier(Features(DataProcessor(test_data_path)))
     classifier.train()
