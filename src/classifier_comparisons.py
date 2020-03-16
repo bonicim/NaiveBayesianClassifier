@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from src.Classifier import Classifier
-from src.Features import Features
-from src.DataProcessor import DataProcessor
+from src.Tweet import Tweet
+from src.TweetProbabilities import TweetProbabilities
+from src.TweetData import TweetData
 
 import numpy as np
 import csv
@@ -18,13 +18,13 @@ TEST_TARGET = ["HillaryClinton", "realDonaldTrump"]
 
 
 def main():
-    d = DataProcessor(
+    d = TweetData(
         path.abspath(path.join(path.dirname(__file__), "..", "data", "tweets.csv"))
     )
     tweets = d.process()
 
-    f = Features(
-        DataProcessor(
+    f = TweetProbabilities(
+        TweetData(
             path.abspath(path.join(path.dirname(__file__), "..", "data", "tweets.csv"))
         )
     )

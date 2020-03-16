@@ -1,20 +1,20 @@
 #!/usr/bin/python
 
 from .__init__ import __version__
-from .Classifier import Classifier
-from .Features import Features
-from .DataProcessor import DataProcessor
+from .Tweet import Tweet
+from .TweetProbabilities import TweetProbabilities
+from .TweetData import TweetData
 import argparse
 from os import path
 
 
 def main():
     def train(args):
-        classifier = Classifier(Features(DataProcessor(args.filepath)))
+        classifier = Tweet(TweetProbabilities(TweetData(args.filepath)))
         classifier.train()
 
     def classify(args):
-        classifier = Classifier(Features(DataProcessor(args.filepath)))
+        classifier = Tweet(TweetProbabilities(TweetData(args.filepath)))
         classifier.train()
         print(classifier.classify(args.tweet))
 

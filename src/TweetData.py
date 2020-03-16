@@ -4,7 +4,7 @@ import string
 from collections import Counter
 
 
-class DataProcessor:
+class TweetData:
     def __init__(self, filename):
         self._filename = filename
 

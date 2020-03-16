@@ -4,7 +4,7 @@ from sklearn.metrics import classification_report
 import pprint
 
 
-class Classifier:
+class Tweet:
     def __init__(self, features):
         self._features = features
         self._prior_prob = None
@@ -45,7 +45,7 @@ class Classifier:
 
         print("\n\n")
         pprint.pprint(hypothesis_prob)
-        return hypothesis_prob[0][0]
+        return hypothesis_prob
 
     def classify_collection_tweets(self, tweets):
         prediction = []

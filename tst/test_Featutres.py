@@ -7,14 +7,14 @@ test_data_path = path.abspath(
 
 
 @pytest.fixture
-def features():
-    from src.DataProcessor import DataProcessor
-    from src.Features import Features
+def tweet_probabilities():
+    from src.TweetData import TweetData
+    from src.TweetProbabilities import TweetProbabilities
 
-    return Features(DataProcessor(test_data_path))
+    return TweetProbabilities(TweetData(test_data_path))
 
 
-def test_extract(features):
+def test_extract(tweet_probabilities):
     expected = {
         "realDonaldTrump": -0.6931471805599453,
         "HillaryClinton": -0.6931471805599453,
@@ -63,7 +63,7 @@ def test_extract(features):
         },
     }
 
-    probs = features.extract_features()
+    probs = tweet_probabilities.extract_features()
 
     prior_probs = probs[0]
     vocab = probs[1]

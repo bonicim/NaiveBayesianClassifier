@@ -7,13 +7,13 @@ test_data_path = path.abspath(
 
 
 @pytest.fixture
-def data_processor():
-    from src.DataProcessor import DataProcessor
+def tweet_data():
+    from src.TweetData import TweetData
 
-    return DataProcessor(test_data_path)
+    return TweetData(test_data_path)
 
 
-def test_process(data_processor):
+def test_process(tweet_data):
     expected = [
         (
             "HillaryClinton",
@@ -45,6 +45,6 @@ def test_process(data_processor):
         ),
     ]
 
-    actual = data_processor.process()
+    actual = tweet_data.process()
 
     assert actual == expected

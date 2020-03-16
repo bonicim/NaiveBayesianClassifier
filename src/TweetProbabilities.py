@@ -1,7 +1,7 @@
 import math
 
 
-class Features:
+class TweetProbabilities:
     def __init__(self, data_processor):
         self._data_processor = data_processor
         self._tweets = None
@@ -9,9 +9,9 @@ class Features:
     def extract_features(self):
         self._tweets = self._data_processor.process()
 
-        prior_prob = self._build_prior_prob()
-        vocab = self._build_vocab()
-        cond_prob = self._build_cond_prob()
+        prior_prob = self._build_prior_prob()  # class probabilities
+        vocab = self._build_vocab()  # feature raw count
+        cond_prob = self._build_cond_prob()  # feature probabilities
         return (prior_prob, vocab, cond_prob)
 
     def _build_prior_prob(self):
