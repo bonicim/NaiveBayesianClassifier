@@ -2,7 +2,7 @@ import pytest
 from os import path
 
 test_data_path = path.abspath(
-    path.join(path.dirname(__file__), "..", "data", "tweet_test_data_small.csv")
+    path.join(path.dirname(__file__), "..", "data", "training_data_small.csv")
 )
 
 

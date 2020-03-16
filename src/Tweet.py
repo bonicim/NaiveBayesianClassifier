@@ -3,7 +3,7 @@ from math import log, exp
 from sklearn.metrics import classification_report
 import pprint
 from typing import List, Tuple, Type
-from .TweetData import TweetData
+from src.TweetData import TweetData
 
 
 class Tweet:
