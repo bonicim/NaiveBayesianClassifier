@@ -2,21 +2,23 @@ from collections import Counter
 from math import log, exp
 from sklearn.metrics import classification_report
 import pprint
+from typing import List, Tuple, Type
+from .TweetData import TweetData
 
 
 class Tweet:
-    def __init__(self, features):
-        self._features = features
+    def __init__(self, TweetProbabilities):
+        self._tweet_probabilities = TweetProbabilities
         self._prior_prob = None
         self._vocab = None
         self._cond_prob = None
 
     def train(self):
         self._prior_prob, self._vocab, self._cond_prob = (
-            self._features.extract_features()
+            self._tweet_probabilities.extract_features()
         )
 
-    def classify(self, tweet):
+    def classify(self, tweet: str) -> List[Tuple]:
         # turn tweet into bag of words
         words = Counter(tweet.split())
         hypothesis_prob = {}
@@ -41,27 +43,19 @@ class Tweet:
         hypothesis_prob = sorted(
             hypothesis_prob.items(), key=lambda t: t[1], reverse=True
         )
-        hypothesis_prob = [(author, exp(prob)) for author, prob in hypothesis_prob]
 
-        print("\n\n")
-        pprint.pprint(hypothesis_prob)
-        return hypothesis_prob
+        return [(author, exp(prob)) for author, prob in hypothesis_prob]
 
-    def classify_collection_tweets(self, tweets):
-        prediction = []
+    def classify_collection_tweets(self, tweets: Type[TweetData]) -> List[Tuple]:
+        return [
+            self.classify(tweet) for _, tweet in tweets.generate_author_tweet_data()
+        ]
 
-        for _, tweet in tweets:
-            predicted_author = self.classify(tweet)
-            prediction.append(predicted_author)
+    def evaluation(self, test_data: Type[TweetData]):
+        truths = test_data.generate_tweet_author_data()
+        predictions = [
+            self.classify(tweet)[0][0]
+            for _, tweet in test_data.generate_author_tweet_data()
+        ]
 
-        return prediction
-
-    def evaluation(self, test_data):
-        truth = [author for author, _ in test_data]
-        prediction = []
-
-        for _, tweet in test_data:
-            result = self.classify(tweet)
-            prediction.append(result[0])
-
-        return classification_report(truth, prediction)
+        return classification_report(truths, predictions)

@@ -75,3 +75,10 @@ class TweetData:
 
     def convert_data_to_list(self):
         return self._read()
+
+    def generate_tweet_author_data(self):
+        tweets = self._read()
+        return [author for author, _ in tweets]
+
+    def generate_author_tweet_data(self):
+        return self._read()
