@@ -4,6 +4,7 @@ from src.TweetData import TweetData
 from src.TweetClassifier import TweetClassifier
 from src.TweetProbabilities import TweetProbabilities
 from os import path
+from time import time
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.naive_bayes import BernoulliNB, ComplementNB, MultinomialNB
@@ -31,20 +32,35 @@ def evaluate_scikit_naive_bayes_classifiers(train_data, test_data):
     truths = test_data.generate_authors()
 
     for name, clf in scikit_naive_bayes_classifiers.items():
+        t0 = time()
         clf.fit(X_train, Y_train)
+        train_time = time() - t0
+
+        t0 = time()
         predictions = clf.predict(X_test)
-        print_reports(truths, predictions, name)
+        pred_time = time() - t0
+
+        print_reports(truths, predictions, name, train_time, pred_time)
 
 
 def evaluate_in_house_naive_bayes_classifier(train_data, test_data):
     classifier = TweetClassifier(TweetProbabilities(train_data))
+    t0 = time()
     classifier.train()
+    train_time = time() - t0
+
+    t0 = time()
     predictions = [
         result[0][0] for result in classifier.classify_collection_tweets(test_data)
     ]
+    pred_time = time() - t0
 
     print_reports(
-        test_data.generate_authors(), predictions, "In-House Naive Bayes Classifier"
+        test_data.generate_authors(),
+        predictions,
+        "In-House Naive Bayes Classifier",
+        train_time,
+        pred_time,
     )
 
 
@@ -64,10 +80,12 @@ def get_testing_data():
     )
 
 
-def print_reports(truths, predictions, msg):
+def print_reports(truths, predictions, msg, train_time, pred_time):
     print(f"\n{msg}\n")
     print(classification_report(truths, predictions))
     print(f"Confusion matrix \n {confusion_matrix(truths, predictions)}\n")
+    print(f"Training time: {train_time:.4f}s")
+    print(f"Classifying time: {pred_time:.4f}s\n")
 
 
 if __name__ == "__main__":
