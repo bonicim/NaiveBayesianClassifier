@@ -10,12 +10,16 @@ class TweetFeatures:
 
     def extract_features(self) -> Tuple:
         self._tweets = self._tweet_data.process()
+
         # prior probability of every author
         prior_prob = self._build_prior_prob()
+
         # raw count of every word in all tweets
         vocab = self._build_vocab()
+
         # word probabilities per author
         cond_prob = self._build_feature_probabilities()
+
         return (prior_prob, vocab, cond_prob)
 
     def _build_prior_prob(self):

@@ -51,8 +51,8 @@ The following command classifies a test Tweet from this repo's sample training d
 ```bash
 # classify takes two arguments:
 # the first argument is a path to the training data
-# the second argument is a path to the test Tweet
-$ nbc classify data/training_data.csv data/donald_tweet.txt
+# the second argument is a Tweet
+$ nbc classify data/training_data.csv 'America must decide between failed policies or fresh perspective, a corrupt system or an outsider'
 ```
 
 # Development

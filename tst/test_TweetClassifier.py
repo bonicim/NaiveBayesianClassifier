@@ -22,6 +22,7 @@ def test_small_data_should_predict_donald(classifier_small):
     expected = ["realDonaldTrump", "HillaryClinton"]
 
     predictions = classifier_small.classify(tweet)
+
     assert get_authors(predictions) == expected
 
 
@@ -37,7 +38,7 @@ def classifier_large_data_set():
 
 
 @pytest.fixture
-def tweet_testing_data_input():
+def test_data():
     return TweetData(
         path.abspath(
             path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
@@ -63,15 +64,11 @@ def test_large_data_should_predict_hillary(classifier_large_data_set):
     assert get_authors(predictions) == expected
 
 
-def test_large_data_predict_given_list_of_tests(
-    classifier_large_data_set, tweet_testing_data_input
-):
+def test_large_data_predict_given_tweets_csv_file(classifier_large_data_set, test_data):
 
-    predictions = classifier_large_data_set.classify_collection_tweets(
-        tweet_testing_data_input
-    )
+    predictions = classifier_large_data_set.classify_collection_tweets(test_data)
 
-    assert len(predictions) == len(tweet_testing_data_input.generate_authors())
+    assert len(predictions) == len(test_data.generate_authors())
 
 
 def get_authors(predictions):

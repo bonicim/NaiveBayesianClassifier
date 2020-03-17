@@ -16,7 +16,8 @@ def main():
     def classify(args):
         classifier = TweetClassifier(TweetFeatures(TweetData(args.filepath)))
         classifier.train()
-        print(classifier.classify(args.tweet))
+        results = classifier.classify(args.tweet)
+        print(f"\n {results[0][0]}")
 
     def no_command(args):
         if args.version:
