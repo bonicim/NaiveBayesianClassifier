@@ -6,7 +6,7 @@ from typing import List, Tuple, Type
 from src.TweetData import TweetData
 
 
-class Tweet:
+class TweetClassifier:
     def __init__(self, TweetProbabilities):
         self._tweet_probabilities = TweetProbabilities
         self._prior_prob = None

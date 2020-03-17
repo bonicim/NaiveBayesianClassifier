@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from src.TweetData import TweetData
-from src.Tweet import Tweet
+from src.TweetClassifier import TweetClassifier
 from src.TweetProbabilities import TweetProbabilities
 from os import path
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -37,7 +37,7 @@ def evaluate_scikit_naive_bayes_classifiers(train_data, test_data):
 
 
 def evaluate_in_house_naive_bayes_classifier(train_data, test_data):
-    classifier = Tweet(TweetProbabilities(train_data))
+    classifier = TweetClassifier(TweetProbabilities(train_data))
     classifier.train()
     predictions = [
         result[0][0] for result in classifier.classify_collection_tweets(test_data)

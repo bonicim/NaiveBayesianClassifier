@@ -2,7 +2,7 @@ import pytest
 from os import path
 from src.TweetData import TweetData
 from src.TweetProbabilities import TweetProbabilities
-from src.Tweet import Tweet
+from src.TweetClassifier import TweetClassifier
 import pprint
 
 
@@ -11,7 +11,7 @@ def classifier_small():
     test_data_path = path.abspath(
         path.join(path.dirname(__file__), "..", "data", "training_data_small.csv")
     )
-    classifier = Tweet(TweetProbabilities(TweetData(test_data_path)))
+    classifier = TweetClassifier(TweetProbabilities(TweetData(test_data_path)))
     classifier.train()
 
     return classifier
@@ -30,7 +30,7 @@ def classifier_large_data_set():
     train_data_path = path.abspath(
         path.join(path.dirname(__file__), "..", "data", "training_data.csv")
     )
-    classifier = Tweet(TweetProbabilities(TweetData(train_data_path)))
+    classifier = TweetClassifier(TweetProbabilities(TweetData(train_data_path)))
     classifier.train()
 
     return classifier

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from .__init__ import __version__
-from .Tweet import Tweet
+from .TweetClassifier import TweetClassifier
 from .TweetProbabilities import TweetProbabilities
 from .TweetData import TweetData
 import argparse
@@ -10,11 +10,11 @@ from os import path
 
 def main():
     def train(args):
-        classifier = Tweet(TweetProbabilities(TweetData(args.filepath)))
+        classifier = TweetClassifier(TweetProbabilities(TweetData(args.filepath)))
         classifier.train()
 
     def classify(args):
-        classifier = Tweet(TweetProbabilities(TweetData(args.filepath)))
+        classifier = TweetClassifier(TweetProbabilities(TweetData(args.filepath)))
         classifier.train()
         print(classifier.classify(args.tweet))
 
