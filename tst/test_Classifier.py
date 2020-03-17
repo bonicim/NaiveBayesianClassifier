@@ -67,13 +67,6 @@ def test_large_data_should_predict_hillary(classifier_large_data_set):
 
 
 def test_evaluation(classifier_large_data_set, tweet_testing_data_input):
-    # test_data = TweetData(
-    #     path.abspath(
-    #         path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
-    #     )
-    # )
-    # test_data.process()
-
     result = classifier_large_data_set.evaluation(tweet_testing_data_input)
 
     print("\n\n")
