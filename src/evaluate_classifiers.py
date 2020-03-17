@@ -10,11 +10,9 @@ from sklearn.naive_bayes import BernoulliNB, ComplementNB, MultinomialNB
 
 
 def main():
-    # prepare testing and training data
     train_data = get_training_data()
     test_data = get_testing_data()
 
-    # evaluate classfiers
     evaluate_multinomial_naive_bayes_classfier(train_data, test_data)
     evaluate_in_house_naive_bayes_classifier(train_data, test_data)
 

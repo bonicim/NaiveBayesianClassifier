@@ -12,8 +12,6 @@ class TweetData:
     def process(self, n_gram_size=None):
         if n_gram_size is None:
             n_gram_size = 1
-        # tweets = self._read()
-        # self._tweets = tweets
         tweets = self._tokenize(self._tweets, n_gram_size)
         tweets = self._remove_stopwords(tweets)
         tweets = self._make_bag_of_words(tweets)

@@ -11,7 +11,9 @@ class TweetProbabilities:
 
         prior_prob = self._build_prior_prob()  # class probabilities
         vocab = self._build_vocab()  # feature raw count
-        cond_prob = self._build_feature_probabilities()  # feature probabilities
+        cond_prob = (
+            self._build_feature_probabilities()
+        )  # feature probabilities per class
         return (prior_prob, vocab, cond_prob)
 
     def _build_prior_prob(self):
