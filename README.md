@@ -52,7 +52,7 @@ The following command classifies a test Tweet from this repo's sample training d
 # classify takes two arguments:
 # the first argument is a path to the training data
 # the second argument is a path to the test Tweet
-$ nbc classify data/tweets.csv data/donald_tweet.txt
+$ nbc classify data/training_data.csv data/donald_tweet.txt
 ```
 
 # Development
