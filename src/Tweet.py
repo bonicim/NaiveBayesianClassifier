@@ -1,6 +1,6 @@
 from collections import Counter
 from math import log, exp
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 import pprint
 from typing import List, Tuple, Type
 from src.TweetData import TweetData
@@ -53,9 +53,28 @@ class Tweet:
 
     def evaluation(self, test_data: Type[TweetData]):
         truths = test_data.generate_tweet_author_data()
+
         predictions = [
             self.classify(tweet)[0][0]
             for _, tweet in test_data.generate_author_tweet_data()
         ]
 
-        return classification_report(truths, predictions)
+        hillary_truths = sum([1 for author in truths if author == "HillaryClinton"])
+        hillary_predictions = sum(
+            [1 for author in predictions if author == "HillaryClinton"]
+        )
+
+        don_truths = sum([1 for author in truths if author == "realDonaldTrump"])
+        don_predictions = sum(
+            [1 for author in predictions if author == "realDonaldTrump"]
+        )
+
+        print(f"\nHillary predictions: {hillary_predictions}")
+        print(f"Hillary truths: {hillary_truths}")
+        print(f"don predictions: {don_predictions}")
+        print(f"don truths: {don_truths}")
+
+        confusion = confusion_matrix(truths, predictions)
+        classification = classification_report(truths, predictions)
+
+        return (confusion, classification)

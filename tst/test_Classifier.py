@@ -65,7 +65,8 @@ def test_evaluation(classifier_large_data_set):
     result = classifier_large_data_set.evaluation(test_data)
 
     print("\n\n")
-    print(result)
+    for report in result:
+        print(report)
 
     assert result is not None
 

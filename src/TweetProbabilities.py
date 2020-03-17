@@ -2,12 +2,12 @@ import math
 
 
 class TweetProbabilities:
-    def __init__(self, data_processor):
-        self._data_processor = data_processor
+    def __init__(self, tweet_data):
+        self._tweet_data = tweet_data
         self._tweets = None
 
     def extract_features(self):
-        self._tweets = self._data_processor.process()
+        self._tweets = self._tweet_data.process()
 
         prior_prob = self._build_prior_prob()  # class probabilities
         vocab = self._build_vocab()  # feature raw count
