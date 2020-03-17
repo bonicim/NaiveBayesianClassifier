@@ -27,10 +27,10 @@ def test_small_data_should_predict_donald(classifier_small):
 
 @pytest.fixture
 def classifier_large_data_set():
-    test_data_path = path.abspath(
+    train_data_path = path.abspath(
         path.join(path.dirname(__file__), "..", "data", "training_data.csv")
     )
-    classifier = Tweet(TweetProbabilities(TweetData(test_data_path)))
+    classifier = Tweet(TweetProbabilities(TweetData(train_data_path)))
     classifier.train()
 
     return classifier
@@ -38,14 +38,11 @@ def classifier_large_data_set():
 
 @pytest.fixture
 def tweet_testing_data_input():
-    test_data = TweetData(
+    return TweetData(
         path.abspath(
             path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
         )
     )
-    test_data.process()
-
-    return test_data
 
 
 def test_large_data_should_predict_donald(classifier_large_data_set):
@@ -66,16 +63,6 @@ def test_large_data_should_predict_hillary(classifier_large_data_set):
     assert get_authors(predictions) == expected
 
 
-def test_evaluation(classifier_large_data_set, tweet_testing_data_input):
-    result = classifier_large_data_set.evaluation(tweet_testing_data_input)
-
-    print("\n\n")
-    for report in result:
-        print(report)
-
-    assert result is not None
-
-
 def test_large_data_predict_given_list_of_tests(
     classifier_large_data_set, tweet_testing_data_input
 ):
@@ -84,9 +71,7 @@ def test_large_data_predict_given_list_of_tests(
         tweet_testing_data_input
     )
 
-    assert len(predictions) == len(
-        tweet_testing_data_input.generate_author_tweet_data()
-    )
+    assert len(predictions) == len(tweet_testing_data_input.generate_authors())
 
 
 def get_authors(predictions):

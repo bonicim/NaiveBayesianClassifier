@@ -1,17 +1,21 @@
 import pytest
 from os import path
 
-test_data_path = path.abspath(
-    path.join(path.dirname(__file__), "..", "data", "training_data_small.csv")
-)
-
 
 @pytest.fixture
 def tweet_probabilities():
     from src.TweetData import TweetData
     from src.TweetProbabilities import TweetProbabilities
 
-    return TweetProbabilities(TweetData(test_data_path))
+    return TweetProbabilities(
+        TweetData(
+            path.abspath(
+                path.join(
+                    path.dirname(__file__), "..", "data", "training_data_small.csv"
+                )
+            )
+        )
+    )
 
 
 def test_extract(tweet_probabilities):
@@ -63,11 +67,7 @@ def test_extract(tweet_probabilities):
         },
     }
 
-    probs = tweet_probabilities.extract_features()
-
-    prior_probs = probs[0]
-    vocab = probs[1]
-    cond_prob = probs[2]
+    prior_probs, vocab, cond_prob = tweet_probabilities.extract_features()
 
     assert prior_probs == expected
     assert vocab == expected_vocab

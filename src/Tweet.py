@@ -48,32 +48,5 @@ class Tweet:
 
     def classify_collection_tweets(self, tweets: Type[TweetData]) -> List[Tuple]:
         return [
-            self.classify(tweet) for _, tweet in tweets.generate_author_tweet_data()
+            self.classify(tweet) for _, tweet in tweets.generate_author_to_tweet_data()
         ]
-
-    def evaluation(self, test_data: Type[TweetData]):
-        truths = test_data.generate_tweet_authors()
-
-        predictions = [
-            self.classify(tweet)[0][0] for tweet in test_data.generate_tweets()
-        ]
-
-        hillary_truths = sum([1 for author in truths if author == "HillaryClinton"])
-        hillary_predictions = sum(
-            [1 for author in predictions if author == "HillaryClinton"]
-        )
-
-        don_truths = sum([1 for author in truths if author == "realDonaldTrump"])
-        don_predictions = sum(
-            [1 for author in predictions if author == "realDonaldTrump"]
-        )
-
-        print(f"\nHillary predictions: {hillary_predictions}")
-        print(f"Hillary truths: {hillary_truths}")
-        print(f"don predictions: {don_predictions}")
-        print(f"don truths: {don_truths}")
-
-        confusion = confusion_matrix(truths, predictions)
-        classification = classification_report(truths, predictions)
-
-        return (confusion, classification)

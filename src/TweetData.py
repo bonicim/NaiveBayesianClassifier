@@ -7,20 +7,21 @@ from collections import Counter
 class TweetData:
     def __init__(self, filename):
         self._filename = filename
+        self._tweets = self._read(filename)
 
     def process(self, n_gram_size=None):
         if n_gram_size is None:
             n_gram_size = 1
-        tweets = self._read()
-        self._tweets = tweets
-        tweets = self._tokenize(tweets, n_gram_size)
+        # tweets = self._read()
+        # self._tweets = tweets
+        tweets = self._tokenize(self._tweets, n_gram_size)
         tweets = self._remove_stopwords(tweets)
         tweets = self._make_bag_of_words(tweets)
 
         return tweets
 
-    def _read(self):
-        with open(self._filename) as csvfile:
+    def _read(self, filename):
+        with open(filename) as csvfile:
             reader = csvreader(csvfile, delimiter=",", quotechar='"')
             next(reader)
             tweets = [(row[1], row[2]) for row in reader]
@@ -73,10 +74,8 @@ class TweetData:
     def generate_tweets(self):
         return [tweet for _, tweet in self._tweets]
 
-    def generate_tweet_authors(self):
+    def generate_authors(self):
         return [author for author, _ in self._tweets]
 
-    def generate_author_tweet_data(self):
-        if self._tweets is None:
-            self._tweets == self._read()
+    def generate_author_to_tweet_data(self):
         return self._tweets

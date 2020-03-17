@@ -1,16 +1,16 @@
 import pytest
 from os import path
 
-test_data_path = path.abspath(
-    path.join(path.dirname(__file__), "..", "data", "training_data_small.csv")
-)
-
 
 @pytest.fixture
 def tweet_data():
     from src.TweetData import TweetData
 
-    return TweetData(test_data_path)
+    return TweetData(
+        path.abspath(
+            path.join(path.dirname(__file__), "..", "data", "training_data_small.csv")
+        )
+    )
 
 
 def test_process(tweet_data):
