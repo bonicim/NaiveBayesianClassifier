@@ -67,8 +67,22 @@ $ source nbc_env/bin/activate
 $ pip install --editable .
 ```
 
-To run the tests, run the following command:
+## Testing
+
+To run the tests with verbose and to see any print statements, run the following command:
 
 ```bash
 $ pytest --capture=no -v
+```
+
+To view code coverage, run the following commands:
+
+```bash
+$ coverage run --source=src --omit="src/nbc_cli.py","src/eval*" -m pytest
+# To view coverage report on the command line:
+$ coverage report -m
+
+# To view coverage report on a local browser
+$ coverage html
+$ open htmlcov/index.html
 ```
