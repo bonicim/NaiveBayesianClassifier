@@ -5,9 +5,9 @@ from os import path
 @pytest.fixture
 def tweet_probabilities():
     from src.TweetData import TweetData
-    from src.TweetProbabilities import TweetProbabilities
+    from src.TweetFeatures import TweetFeatures
 
-    return TweetProbabilities(
+    return TweetFeatures(
         TweetData(
             path.abspath(
                 path.join(

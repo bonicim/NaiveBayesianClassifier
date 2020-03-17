@@ -6,20 +6,22 @@ import string
 
 
 class TweetData:
-    def __init__(self, filename, stop_words=None):
+    def __init__(self, filename, stop_words=True):
         self._filename = filename
         self._tweets = self._read(filename)
-        if stop_words is not None:
-            self._stop_words = stop_words
+        if not stop_words:
+            self._stop_words = set()
         else:
             self._stop_words = set(stopwords.words("english"))
 
     def process(self, n_gram_size=None) -> List[Tuple]:
         if n_gram_size is None:
             n_gram_size = 1
+        if n_gram_size < 1:
+            raise ValueError("Size of a token word must be greater than 0.")
         tweets = self._tokenize(self._tweets, n_gram_size)
         tweets = self._remove_stopwords(tweets)
-        tweets = self._make_bag_of_words(tweets)
+        tweets = self._convert_to_bag_of_words(tweets)
 
         return tweets
 
@@ -43,11 +45,10 @@ class TweetData:
 
         return self._tokenize_n_gram(tweets, n_gram_size)
 
-    # TODO: write test for n_gram_size > than 1
     def _tokenize_n_gram(self, tweets, n_gram_size):
         if n_gram_size == 1:
             return tweets
-
+        # TODO: write test for n_gram_size > than 1
         result = []
         for author, tweet in tweets:
             re_tokenized_tweet = []
@@ -68,7 +69,7 @@ class TweetData:
             for tweet in tweets_tokenized
         ]
 
-    def _make_bag_of_words(self, tweets):
+    def _convert_to_bag_of_words(self, tweets):
         return [(author, Counter(tokens)) for author, tokens in tweets]
 
     def generate_tweets(self) -> List[str]:

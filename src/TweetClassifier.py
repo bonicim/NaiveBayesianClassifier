@@ -1,4 +1,5 @@
 from src.TweetData import TweetData
+from src.TweetFeatures import TweetFeatures
 from sklearn.metrics import classification_report, confusion_matrix
 from collections import Counter
 from math import log, exp
@@ -6,8 +7,8 @@ from typing import List, Tuple, Type
 
 
 class TweetClassifier:
-    def __init__(self, TweetProbabilities):
-        self._tweet_probabilities = TweetProbabilities
+    def __init__(self, tweet_probabilities):
+        self._tweet_probabilities = tweet_probabilities
         self._prior_prob = None
         self._vocab = None
         self._cond_prob = None

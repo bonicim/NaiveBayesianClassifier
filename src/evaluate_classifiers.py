@@ -2,9 +2,10 @@
 
 from src.TweetData import TweetData
 from src.TweetClassifier import TweetClassifier
-from src.TweetProbabilities import TweetProbabilities
+from src.TweetFeatures import TweetFeatures
 from os import path
 from time import time
+from typing import Type
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.naive_bayes import BernoulliNB, ComplementNB, MultinomialNB
@@ -17,11 +18,12 @@ scikit_naive_bayes_classifiers = {
 
 
 def main():
-    train_data = get_training_data()
     test_data = get_testing_data()
 
-    evaluate_scikit_naive_bayes_classifiers(train_data, test_data)
-    evaluate_in_house_naive_bayes_classifier(train_data, test_data)
+    evaluate_scikit_naive_bayes_classifiers(
+        get_training_data(stop_words=False), test_data
+    )
+    evaluate_in_house_naive_bayes_classifier(get_training_data(), test_data)
 
 
 def evaluate_scikit_naive_bayes_classifiers(train_data, test_data):
@@ -43,8 +45,10 @@ def evaluate_scikit_naive_bayes_classifiers(train_data, test_data):
         print_reports(truths, predictions, name, train_time, pred_time)
 
 
-def evaluate_in_house_naive_bayes_classifier(train_data, test_data):
-    classifier = TweetClassifier(TweetProbabilities(train_data))
+def evaluate_in_house_naive_bayes_classifier(
+    train_data: Type[TweetData], test_data: Type[TweetData]
+):
+    classifier = TweetClassifier(TweetFeatures(train_data))
     t0 = time()
     classifier.train()
     train_time = time() - t0
@@ -64,11 +68,12 @@ def evaluate_in_house_naive_bayes_classifier(train_data, test_data):
     )
 
 
-def get_training_data():
+def get_training_data(stop_words=True):
     return TweetData(
         path.abspath(
             path.join(path.dirname(__file__), "..", "data", "training_data.csv")
-        )
+        ),
+        stop_words=stop_words,
     )
 
 

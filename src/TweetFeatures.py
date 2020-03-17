@@ -1,8 +1,9 @@
-import math
+from src.TweetData import TweetData
 from typing import Tuple
+import math
 
 
-class TweetProbabilities:
+class TweetFeatures:
     def __init__(self, tweet_data):
         self._tweet_data = tweet_data
         self._tweets = None
