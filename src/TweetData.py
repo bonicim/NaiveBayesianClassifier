@@ -12,6 +12,7 @@ class TweetData:
         if n_gram_size is None:
             n_gram_size = 1
         tweets = self._read()
+        self._tweets = tweets
         tweets = self._tokenize(tweets, n_gram_size)
         tweets = self._remove_stopwords(tweets)
         tweets = self._make_bag_of_words(tweets)
@@ -69,16 +70,13 @@ class TweetData:
     def _make_bag_of_words(self, tweets):
         return [(author, Counter(tokens)) for author, tokens in tweets]
 
-    def generate_tweet_data(self):
-        tweets = self._read()
-        return [tweet for _, tweet in tweets]
+    def generate_tweets(self):
+        return [tweet for _, tweet in self._tweets]
 
-    def convert_data_to_list(self):
-        return self._read()
-
-    def generate_tweet_author_data(self):
-        tweets = self._read()
-        return [author for author, _ in tweets]
+    def generate_tweet_authors(self):
+        return [author for author, _ in self._tweets]
 
     def generate_author_tweet_data(self):
-        return self._read()
+        if self._tweets is None:
+            self._tweets == self._read()
+        return self._tweets

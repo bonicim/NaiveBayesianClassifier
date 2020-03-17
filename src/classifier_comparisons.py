@@ -19,9 +19,10 @@ TEST_TARGET = ["HillaryClinton", "realDonaldTrump"]
 
 def main():
     d = TweetData(
-        path.abspath(path.join(path.dirname(__file__), "..", "data", "tweets.csv"))
+        path.abspath(
+            path.join(path.dirname(__file__), "..", "data", "training_data.csv")
+        )
     )
-    tweets = d.process()
 
     f = TweetProbabilities(
         TweetData(
@@ -37,36 +38,36 @@ def main():
         categories[author] = x
 
     # creates a list of lists where the first number maps to an author and the following numbers map to the count of every word in the vocabulary that was seen in the current tweet
-    result = []
-    for author, tweet in tweets:
-        tweet_val = []
-        tweet_val.append(categories.get(author))
+    # result = []
+    # for author, tweet in tweets:
+    #     tweet_val = []
+    #     tweet_val.append(categories.get(author))
 
-        # this is expensive might be a better way
-        for word, count in vocab.items():
-            val = 0.0
-            if word in tweet:
-                val += count
-            tweet_val.append(val)
+    #     # this is expensive might be a better way
+    #     for word, count in vocab.items():
+    #         val = 0.0
+    #         if word in tweet:
+    #             val += count
+    #         tweet_val.append(val)
 
-        result.append(tweet_val)
+    #     result.append(tweet_val)
 
-    numpy_arr = np.array(result)
-    numpy_shape = np.shape(numpy_arr)
-    training_data = numpy_arr[:, 1 : numpy_shape[1]]
-    training_targets = numpy_arr[:, 0]
+    # numpy_arr = np.array(result)
+    # numpy_shape = np.shape(numpy_arr)
+    # training_data = numpy_arr[:, 1 : numpy_shape[1]]
+    # training_targets = numpy_arr[:, 0]
 
-    # build a SciKit classifier
-    text_classfier = Pipeline(
-        [
-            ("vect", CountVectorizer()),
-            ("tfidf", TfidfTransformer()),
-            ("clf", MultinomialNB()),
-        ]
-    )
+    # # build a SciKit classifier
+    # text_classfier = Pipeline(
+    #     [
+    #         ("vect", CountVectorizer()),
+    #         ("tfidf", TfidfTransformer()),
+    #         ("clf", MultinomialNB()),
+    #     ]
+    # )
 
-    print(training_data)
-    print(training_targets)
+    # print(training_data)
+    # print(training_targets)
     # text_classfier = text_classfier.fit(training_data, training_targets)
     # prediction = text_classfier.predict(d.generate_tweet_data())
 

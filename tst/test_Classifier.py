@@ -36,6 +36,18 @@ def classifier_large_data_set():
     return classifier
 
 
+@pytest.fixture
+def tweet_testing_data_input():
+    test_data = TweetData(
+        path.abspath(
+            path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
+        )
+    )
+    test_data.process()
+
+    return test_data
+
+
 def test_large_data_should_predict_donald(classifier_large_data_set):
     tweet = "I refuse to call Megyn Kelly a bimbo, because that would not be politically correct. Instead I will only call her a lightweight reporter!"
     expected = ["realDonaldTrump", "HillaryClinton"]
@@ -54,15 +66,15 @@ def test_large_data_should_predict_hillary(classifier_large_data_set):
     assert get_authors(predictions) == expected
 
 
-def test_evaluation(classifier_large_data_set):
+def test_evaluation(classifier_large_data_set, tweet_testing_data_input):
+    # test_data = TweetData(
+    #     path.abspath(
+    #         path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
+    #     )
+    # )
+    # test_data.process()
 
-    test_data = TweetData(
-        path.abspath(
-            path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
-        )
-    )
-
-    result = classifier_large_data_set.evaluation(test_data)
+    result = classifier_large_data_set.evaluation(tweet_testing_data_input)
 
     print("\n\n")
     for report in result:
@@ -71,16 +83,17 @@ def test_evaluation(classifier_large_data_set):
     assert result is not None
 
 
-def test_large_data_predict_given_list_of_tests(classifier_large_data_set):
-    tweets = TweetData(
-        path.abspath(
-            path.join(path.dirname(__file__), "..", "data", "testing_data.csv")
-        )
+def test_large_data_predict_given_list_of_tests(
+    classifier_large_data_set, tweet_testing_data_input
+):
+
+    predictions = classifier_large_data_set.classify_collection_tweets(
+        tweet_testing_data_input
     )
 
-    predictions = classifier_large_data_set.classify_collection_tweets(tweets)
-
-    assert len(predictions) == len(tweets.generate_author_tweet_data())
+    assert len(predictions) == len(
+        tweet_testing_data_input.generate_author_tweet_data()
+    )
 
 
 def get_authors(predictions):

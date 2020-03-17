@@ -52,11 +52,10 @@ class Tweet:
         ]
 
     def evaluation(self, test_data: Type[TweetData]):
-        truths = test_data.generate_tweet_author_data()
+        truths = test_data.generate_tweet_authors()
 
         predictions = [
-            self.classify(tweet)[0][0]
-            for _, tweet in test_data.generate_author_tweet_data()
+            self.classify(tweet)[0][0] for tweet in test_data.generate_tweets()
         ]
 
         hillary_truths = sum([1 for author in truths if author == "HillaryClinton"])
