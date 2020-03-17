@@ -1,15 +1,20 @@
 from nltk.corpus import stopwords
 from csv import reader as csvreader
-import string
 from collections import Counter
+from typing import Tuple, List
+import string
 
 
 class TweetData:
-    def __init__(self, filename):
+    def __init__(self, filename, stop_words=None):
         self._filename = filename
         self._tweets = self._read(filename)
+        if stop_words is not None:
+            self._stop_words = stop_words
+        else:
+            self._stop_words = set(stopwords.words("english"))
 
-    def process(self, n_gram_size=None):
+    def process(self, n_gram_size=None) -> List[Tuple]:
         if n_gram_size is None:
             n_gram_size = 1
         tweets = self._tokenize(self._tweets, n_gram_size)
@@ -36,11 +41,9 @@ class TweetData:
             for tweet in tweets
         ]
 
-        tweets = self._tokenize_n_gram(tweets, n_gram_size)
+        return self._tokenize_n_gram(tweets, n_gram_size)
 
-        return tweets
-
-    # TODO: write test for size greater than 1
+    # TODO: write test for n_gram_size > than 1
     def _tokenize_n_gram(self, tweets, n_gram_size):
         if n_gram_size == 1:
             return tweets
@@ -60,20 +63,19 @@ class TweetData:
         return result
 
     def _remove_stopwords(self, tweets_tokenized):
-        stop_words = set(stopwords.words("english"))
         return [
-            (tweet[0], [word for word in tweet[1] if word not in stop_words])
+            (tweet[0], [word for word in tweet[1] if word not in self._stop_words])
             for tweet in tweets_tokenized
         ]
 
     def _make_bag_of_words(self, tweets):
         return [(author, Counter(tokens)) for author, tokens in tweets]
 
-    def generate_tweets(self):
+    def generate_tweets(self) -> List[str]:
         return [tweet for _, tweet in self._tweets]
 
-    def generate_authors(self):
+    def generate_authors(self) -> List[str]:
         return [author for author, _ in self._tweets]
 
-    def generate_author_to_tweet_data(self):
+    def generate_author_to_tweet_data(self) -> List[Tuple]:
         return self._tweets

@@ -1,9 +1,8 @@
+from src.TweetData import TweetData
+from sklearn.metrics import classification_report, confusion_matrix
 from collections import Counter
 from math import log, exp
-from sklearn.metrics import classification_report, confusion_matrix
-import pprint
 from typing import List, Tuple, Type
-from src.TweetData import TweetData
 
 
 class TweetClassifier:
@@ -20,7 +19,7 @@ class TweetClassifier:
 
     def classify(self, tweet: str) -> List[Tuple]:
         # turn tweet into bag of words
-        words = Counter(tweet.split())
+        tweet_words = Counter(tweet.split())
         hypothesis_prob = {}
         total_vocab = sum(self._vocab.values())
 
@@ -30,21 +29,16 @@ class TweetClassifier:
             author_vocab = self._cond_prob[author]
             total_author_vocab = sum(author_vocab.values())
 
-            for word, count in words.items():
-                prob_given_category = (author_vocab.get(word, 0.0) + 1) / (
+            for word, count in tweet_words.items():
+                # Adding 1 to the numerator to use Laplace smoothing to account for words not present in the author's vocab
+                prob_given_author = (author_vocab.get(word, 0.0) + 1) / (
                     total_author_vocab + total_vocab
                 )
+                author_prob = hypothesis_prob[author]
+                author_prob += log(prob_given_author)
+                hypothesis_prob[author] = author_prob
 
-                if prob_given_category > 0:
-                    author_prob = hypothesis_prob[author]
-                    author_prob += log(prob_given_category)
-                    hypothesis_prob[author] = author_prob
-
-        hypothesis_prob = sorted(
-            hypothesis_prob.items(), key=lambda t: t[1], reverse=True
-        )
-
-        return [(author, exp(prob)) for author, prob in hypothesis_prob]
+        return list(sorted(hypothesis_prob.items(), key=lambda t: t[1], reverse=True))
 
     def classify_collection_tweets(self, tweets: Type[TweetData]) -> List[Tuple]:
         return [
