@@ -51,8 +51,8 @@ The following command classifies a test Tweet from this repo's sample training d
 ```bash
 # classify takes two arguments:
 # the first argument is a path to the training data
-# the second argument is a path to the test Tweet
-$ nbc classify data/tweets.csv data/donald_tweet.txt
+# the second argument is a Tweet
+$ nbc classify data/training_data.csv 'America must decide between failed policies or fresh perspective, a corrupt system or an outsider'
 ```
 
 # Development
@@ -67,8 +67,22 @@ $ source nbc_env/bin/activate
 $ pip install --editable .
 ```
 
-To run the tests, run the following command:
+## Testing
+
+To run the tests with verbose and to see any print statements, run the following command:
 
 ```bash
 $ pytest --capture=no -v
+```
+
+To view code coverage, run the following commands:
+
+```bash
+$ coverage run --source=src --omit="src/nbc_cli.py","src/eval*" -m pytest
+# To view coverage report on the command line:
+$ coverage report -m
+
+# To view coverage report on a local browser
+$ coverage html
+$ open htmlcov/index.html
 ```
