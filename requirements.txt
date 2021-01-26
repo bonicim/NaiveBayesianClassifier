@@ -1,7 +1,7 @@
 appdirs==1.4.3
 attrs==19.3.0
 cfgv==3.1.0
-coverage==5.0.4
+coverage==5.4
 distlib==0.3.0
 filelock==3.0.12
 identify==1.4.11
