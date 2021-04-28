@@ -1,0 +1,54 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: importlib-metadata
+    versions:
+    - 3.10.0
+    - 3.10.1
+    - 3.4.0
+    - 3.6.0
+    - 3.7.0
+    - 3.7.2
+    - 3.7.3
+    - 3.9.1
+    - 4.0.0
+  - dependency-name: identify
+    versions:
+    - 1.5.13
+    - 1.5.14
+    - 1.6.1
+    - 2.0.0
+    - 2.1.0
+    - 2.1.1
+    - 2.1.2
+    - 2.1.3
+    - 2.1.4
+    - 2.2.0
+    - 2.2.1
+    - 2.2.2
+    - 2.2.3
+  - dependency-name: nltk
+    versions:
+    - "3.5"
+    - "3.6"
+    - 3.6.1
+  - dependency-name: virtualenv
+    versions:
+    - 20.4.0
+    - 20.4.2
+    - 20.4.3
+  - dependency-name: pytest
+    versions:
+    - 6.2.2
+  - dependency-name: coverage
+    versions:
+    - "5.4"
+  - dependency-name: joblib
+    versions:
+    - 1.0.0
